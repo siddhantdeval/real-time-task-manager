@@ -1,0 +1,58 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: task_manager_app
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - DB_URL=postgres://sid:123456@postgres:5432/task_manager
+      - REDIS_URL=redis://redis:6379
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: task_manager_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=sid
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=task_manager
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sid -d task_manager"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    container_name: task_manager_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  pgdata:
