@@ -1,5 +1,6 @@
 import Redis from 'ioredis';
 import { config } from '../config';
+import { logger } from '../utils/logger';
 
 class RedisService {
   private client: Redis | null = null;
@@ -11,42 +12,42 @@ class RedisService {
     
     // Safety check
     if (!redisUrl) {
-      console.error('Redis URL is not defined in configuration');
+      logger.error('Redis URL is not defined in configuration');
       process.exit(1);
     }
 
-    console.log('Initializing Redis client...');
+    logger.info('Initializing Redis client...');
 
     this.client = new Redis(redisUrl, {
       lazyConnect: true, // We will manually connect
       maxRetriesPerRequest: null, // Allow unlimited retries for commands during reconnection
       retryStrategy: (times: number) => {
         const delay = Math.min(times * 100, 3000); // Exponential backoff capped at 3s
-        console.warn(`Redis retry attempt ${times}. Retrying in ${delay}ms...`);
+        logger.warn(`Redis retry attempt ${times}. Retrying in ${delay}ms...`);
         return delay;
       },
     });
 
     // Event Logging
-    this.client.on('connect', () => console.log('Redis: Connection detected'));
-    this.client.on('ready', () => console.log('Redis: Client is ready'));
-    this.client.on('error', (err) => console.error('Redis: Connection Error:', err));
-    this.client.on('close', () => console.warn('Redis: Connection closed'));
-    this.client.on('reconnecting', () => console.log('Redis: Reconnecting...'));
-    this.client.on('end', () => console.log('Redis: Connection ended'));
+    this.client.on('connect', () => logger.info('Redis: Connection detected'));
+    this.client.on('ready', () => logger.info('Redis: Client is ready'));
+    this.client.on('error', (err) => logger.error('Redis: Connection Error:', err));
+    this.client.on('close', () => logger.warn('Redis: Connection closed'));
+    this.client.on('reconnecting', () => logger.info('Redis: Reconnecting...'));
+    this.client.on('end', () => logger.info('Redis: Connection ended'));
 
     try {
       await this.client.connect();
-      console.log('Redis: Successfully connected to server');
+      logger.info('Redis: Successfully connected to server');
 
       // PING Test
       const pingResponse = await this.client.ping();
-      console.log(`Redis PING response: ${pingResponse}`); // Should be 'PONG'
+      logger.info(`Redis PING response: ${pingResponse}`); // Should be 'PONG'
 
       return this.client;
     } catch (error) {
-      console.error('FATAL: Could not establish initial connection to Redis');
-      console.error(error);
+      logger.error('FATAL: Could not establish initial connection to Redis');
+      logger.error(error);
       process.exit(1); // Fail clearly
     }
   }
@@ -64,15 +65,15 @@ class RedisService {
    */
   public async quit(): Promise<void> {
     if (this.client) {
-      console.log('Redis: Closing connection...');
+      logger.info('Redis: Closing connection...');
       try {
         await this.client.quit();
       } catch (error) {
         // Ignore errors during quit, as we are shutting down anyway
-        console.warn('Redis: Error during quit:', error);
+        logger.warn('Redis: Error during quit:', error);
       }
       this.client = null;
-      console.log('Redis: Connection closed gracefully');
+      logger.info('Redis: Connection closed gracefully');
     }
   }
   public async healthCheck(): Promise<boolean> {
@@ -81,7 +82,7 @@ class RedisService {
       const response = await this.client.ping();
       return response === 'PONG';
     } catch (error) {
-      console.error('Redis: Health check failed', error);
+      logger.error('Redis: Health check failed', error);
       return false;
     }
   }

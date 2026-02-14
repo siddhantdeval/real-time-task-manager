@@ -1,5 +1,6 @@
 import { PrismaClient } from '../generated/prisma';
 import { config } from '../config';
+import { logger } from '../utils/logger';
 
 // Define the threshold for slow queries (in milliseconds)
 const SLOW_QUERY_THRESHOLD = 100;
@@ -30,15 +31,12 @@ const db = prismaClient.$extends({
         const duration = end - start;
 
         if (duration > SLOW_QUERY_THRESHOLD) {
-          console.warn(JSON.stringify({
-            level: 'warn',
-            message: 'Slow Query Detected',
-            timestamp: new Date().toISOString(),
+          logger.warn('Slow Query Detected', {
             model,
             operation,
             duration_ms: Math.round(duration),
             args,
-          }));
+          });
         }
 
         return result;
@@ -50,43 +48,37 @@ const db = prismaClient.$extends({
 // Setup event listeners for connection monitoring
 prismaClient.$on('query', (e) => {
   // Uncomment to log all queries
-  // console.log(`Query: ${e.query} Duration: ${e.duration}ms`);
+  // logger.debug(`Query: ${e.query} Duration: ${e.duration}ms`);
 });
 
 prismaClient.$on('info', (e) => {
-  console.info(JSON.stringify({
-    level: 'info',
-    message: e.message,
+  logger.info(e.message, {
     timestamp: e.timestamp,
     target: e.target,
-  }));
+  });
 });
 
 prismaClient.$on('warn', (e) => {
-  console.warn(JSON.stringify({
-    level: 'warn',
-    message: e.message,
+  logger.warn(e.message, {
     timestamp: e.timestamp,
     target: e.target,
-  }));
+  });
 });
 
 prismaClient.$on('error', (e) => {
-  console.error(JSON.stringify({
-    level: 'error',
-    message: e.message,
+  logger.error(e.message, {
     timestamp: e.timestamp,
     target: e.target,
-  }));
+  });
 });
 
 // DB Service Methods
 const connect = async () => {
   try {
     await prismaClient.$connect();
-    console.log('Database: Successfully connected');
+    logger.info('Database: Successfully connected');
   } catch (error) {
-    console.error('Database: Connection failed', error);
+    logger.error('Database: Connection failed', error);
     process.exit(1);
   }
 };
@@ -94,9 +86,9 @@ const connect = async () => {
 const disconnect = async () => {
   try {
     await prismaClient.$disconnect();
-    console.log('Database: Disconnected gracefully');
+    logger.info('Database: Disconnected gracefully');
   } catch (error) {
-    console.error('Database: Disconnect failed', error);
+    logger.error('Database: Disconnect failed', error);
   }
 };
 
@@ -105,7 +97,7 @@ const healthCheck = async (): Promise<boolean> => {
     await prismaClient.$queryRaw`SELECT 1`;
     return true;
   } catch (error) {
-    console.error('Database: Health check failed', error);
+    logger.error('Database: Health check failed', error);
     return false;
   }
 };

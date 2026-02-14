@@ -4,6 +4,8 @@ import { redisService } from './services/redis.service';
 
 import { dbService } from './services/db.service';
 
+import { logger } from './utils/logger';
+
 const startServer = async () => {
   try {
     // Initialize Redis connection
@@ -14,7 +16,7 @@ const startServer = async () => {
     const PORT = config.port;
 
     const server = app.listen(PORT, () => {
-      console.log(`Server running on port http://localhost:${PORT}`, {
+      logger.info(`Server running on port http://localhost:${PORT}`, {
         timestamp: new Date().toISOString(),
         env: config.env,
         nodeVersion: process.version,
@@ -22,19 +24,19 @@ const startServer = async () => {
     });
 
     const gracefulShutdown = async (signal: string) => {
-      console.log(`\n${signal} received. Starting graceful shutdown...`);
+      logger.info(`\n${signal} received. Starting graceful shutdown...`);
 
       server.close(async () => {
-        console.log('HTTP server closed.');
+        logger.info('HTTP server closed.');
         try {
           await Promise.all([
             redisService.quit(),
             dbService.disconnect()
           ]);
-          console.log('Graceful shutdown completed.');
+          logger.info('Graceful shutdown completed.');
           process.exit(0);
         } catch (error) {
-          console.error('Error during graceful shutdown:', error);
+          logger.error('Error during graceful shutdown:', error);
           process.exit(1);
         }
       });
@@ -43,7 +45,7 @@ const startServer = async () => {
     process.on('SIGINT', () => gracefulShutdown('SIGINT'));
     process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
   } catch (error) {
-    console.error('Failed to start server:', error);
+    logger.error('Failed to start server:', error);
     process.exit(1);
   }
 };

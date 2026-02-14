@@ -8,4 +8,7 @@ export const environmentSchema = Joi.object({
   NODE_ENV: Joi.string()
     .valid('development', 'production', 'test')
     .default('development'),
+  LOG_LEVEL: Joi.string()
+    .valid('error', 'warn', 'info', 'http', 'verbose', 'debug', 'silly')
+    .default('info'),
 }).unknown();

@@ -1,12 +1,27 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import morgan from 'morgan';
+import { logger } from './utils/logger';
 
 const app = express();
 
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
+
+const morganFormat = ':method :url :status :res[content-length] - :response-time ms';
+
+app.use(
+  morgan(morganFormat, {
+    stream: {
+      write: (message) => {
+        const [method, url, status, contentLength, responseTime] = message.split(' ');
+        logger.http(message.trim(), { method, url, status, contentLength, responseTime });
+      },
+    },
+  })
+);
 
 import healthRoutes from './routes/health.routes';
 

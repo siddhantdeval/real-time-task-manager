@@ -35,4 +35,5 @@ export const config = {
   jwt: {
     secret: envVars.JWT_SECRET,
   },
+  logLevel: envVars.LOG_LEVEL,
 };
