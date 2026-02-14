@@ -10,7 +10,11 @@ const startServer = async () => {
     const PORT = config.port;
 
     app.listen(PORT, () => {
-      console.log(`Server running on port http://localhost:${PORT}`);
+      console.log(`Server running on port http://localhost:${PORT}`, {
+        timestamp: new Date().toISOString(),
+        env: config.env,
+        nodeVersion: process.version,
+      });
     });
   } catch (error) {
     console.error('Failed to start server:', error);
