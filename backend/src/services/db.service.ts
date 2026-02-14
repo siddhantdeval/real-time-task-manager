@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../generated/prisma';
 import { config } from '../config';
 
 // Define the threshold for slow queries (in milliseconds)

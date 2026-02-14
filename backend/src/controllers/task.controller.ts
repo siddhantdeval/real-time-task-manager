@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { db } from '../services/db.service';
 import { asyncHandler } from '../utils/asyncHandler';
-import { Status, Priority } from '@prisma/client';
+import { Status, Priority } from '../generated/prisma';
 
 export const getTasks = asyncHandler(async (req: Request, res: Response) => {
   const { project_id, assignee_id, status } = req.query;

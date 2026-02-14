@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { PrismaClient, Role, Status, Priority } from '@prisma/client';
+import { PrismaClient, Role, Status, Priority } from '../src/generated/prisma';
 
 const prisma = new PrismaClient();
 
