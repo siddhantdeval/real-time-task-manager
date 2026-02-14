@@ -17,9 +17,12 @@
   "type": "commonjs",
   "dependencies": {
     "@prisma/client": "^6.19.2",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "google-auth-library": "^10.5.0",
     "helmet": "^8.1.0",
     "ioredis": "^5.9.3",
     "joi": "^18.0.2",
@@ -27,6 +30,8 @@
     "winston": "^3.19.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/ioredis": "^4.28.10",
@@ -34,11 +39,13 @@
     "@types/joi": "^17.2.2",
     "@types/morgan": "^1.9.10",
     "@types/node": "^25.2.3",
+    "@types/supertest": "^6.0.3",
     "eslint": "^10.0.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.11",
     "prettier": "^3.8.1",
     "prisma": "^6.19.2",
+    "supertest": "^7.2.2",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"

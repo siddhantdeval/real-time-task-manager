@@ -19,6 +19,20 @@ export const createUserSchema = Joi.object({
   role: Joi.string().valid('admin', 'member').default('member'),
 });
 
+export const registerSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+});
+
+export const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+});
+
+export const googleLoginSchema = Joi.object({
+  token: Joi.string().required(),
+});
+
 export const updateUserSchema = Joi.object({
   email: Joi.string().email(),
   password: Joi.string().min(6),

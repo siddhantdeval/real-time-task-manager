@@ -7,8 +7,11 @@ const envPath = path.resolve(process.cwd(), '.env');
 const result = dotenv.config({ path: envPath });
 
 if (result.error) {
+  // Only warn if .env file is missing, not if it's empty or other issues
+  // But strictly speaking, dotenv.config() returns error if file is missing
   console.warn(`Warning: .env file not found at ${envPath}`);
 }
+
 
 
 const { error, value: envVars } = environmentSchema.validate(process.env, {
@@ -36,4 +39,9 @@ export const config = {
     secret: envVars.JWT_SECRET,
   },
   logLevel: envVars.LOG_LEVEL,
+  sessionTTL: envVars.SESSION_TTL || 86400, // Default to 24 hours
+  google: {
+    clientId: envVars.GOOGLE_CLIENT_ID,
+    clientSecret: envVars.GOOGLE_CLIENT_SECRET,
+  },
 };

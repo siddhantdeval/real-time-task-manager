@@ -29,7 +29,9 @@ enum Priority {
 model User {
   id            String    @id @default(uuid())
   email         String    @unique
-  password_hash String
+  password_hash String?
+  google_id     String?   @unique
+  avatar_url    String?
   role          Role      @default(member)
   created_at    DateTime  @default(now())
 
