@@ -58,6 +58,16 @@ services:
       - app-network
     restart: unless-stopped
     
+  redis-insight:     
+    image: redis/redisinsight 
+    container_name: task_manager_redis_insight
+    ports:
+      - "5540:5540"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+    
 networks:
   app-network:
     driver: bridge
