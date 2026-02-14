@@ -44,9 +44,16 @@ services:
   redis:
     image: redis:8-alpine
     container_name: task_manager_redis
+    volumes:
+      - redisdata:/data
     ports:
       - "6379:6379"
     command: redis-server --appendonly yes # Enable logging of write operations to disk for persistence. restore data after restart.
+    # healthcheck:
+    #   test: ["CMD-SHELL", "redis-cli ping"]
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 5
     networks:
       - app-network
     restart: unless-stopped
@@ -57,3 +64,4 @@ networks:
 
 volumes:
   pgdata:
+  redisdata:
