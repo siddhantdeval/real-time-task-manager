@@ -12,6 +12,7 @@ The backend is built using **Node.js** with **Express** and **TypeScript**. It f
 - **Language**: TypeScript
 - **Validation**: Joi
 - **Logging**: Winston & Morgan
+- **Linting**: ESLint & Prettier
 
 ### Project Structure
 The project follows a standard layered architecture:

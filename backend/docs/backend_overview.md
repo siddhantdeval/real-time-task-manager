@@ -43,3 +43,4 @@ backend/
 - **Data Flow**: Layered architecture ensuring separation of concerns (see [Data Flow](data_flow.md)).
 - **Health Checks**: `/health` endpoint for monitoring DB and Redis connectivity.
 - **Graceful Shutdown**: Handles SIGINT/SIGTERM for clean connection closing.
+- **Automated Workflows**: Agentic workflows for documentation.
