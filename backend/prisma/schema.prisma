@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  admin
+  member
+}
+
+enum Status {
+  todo
+  in_progress
+  done
+}
+
+enum Priority {
+  low
+  medium
+  high
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password_hash String
+  role          Role      @default(member)
+  created_at    DateTime  @default(now())
+
+  owned_projects Project[]
+  assigned_tasks Task[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  owner_id    String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  owner       User     @relation(fields: [owner_id], references: [id], onDelete: Restrict)
+  tasks       Task[]
+
+  @@index([name])
+  @@map("projects")
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  status      Status   @default(todo)
+  priority    Priority @default(medium)
+  due_date    DateTime?
+  project_id  String
+  assignee_id String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  project     Project  @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  assignee    User?    @relation(fields: [assignee_id], references: [id], onDelete: SetNull)
+
+  @@index([title])
+  @@map("tasks")
+}
