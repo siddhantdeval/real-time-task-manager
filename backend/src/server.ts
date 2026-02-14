@@ -1,8 +1,21 @@
 import app from './app';
 import { config } from './config';
+import { redisService } from './services/redis.service';
 
-const PORT = config.port;
+const startServer = async () => {
+  try {
+    // Initialize Redis connection
+    await redisService.connect();
 
-app.listen(PORT, () => {
-  console.log(`Server running on port http://localhost:${PORT}`);
-});
+    const PORT = config.port;
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
