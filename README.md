@@ -2,7 +2,7 @@
 
 ## 📖 Overview
 
-Real-time Task Manager is a robust, scalable backend application designed to handle task management operations with real-time capabilities. Built with **Node.js**, **Express**, and **TypeScript**, it leverages **PostgreSQL** for reliable data persistence and **Redis** for high-performance caching and messaging (Pub/Sub). 
+Real-time Task Manager is a robust, scalable backend application designed to handle task management operations with real-time capabilities. Built with **Node.js**, **Express**, and **TypeScript**, it leverages **PostgreSQL** for reliable data persistence (managed via **Prisma ORM**) and **Redis** for high-performance caching and messaging (Pub/Sub).
 
 The project is containerized using **Docker** to ensure consistent development and deployment environments.
 
@@ -12,12 +12,15 @@ The project is containerized using **Docker** to ensure consistent development a
 
 - **Robust API Architecture**: Built on Express.js with a modular structure.
 - **Type Safety**: Fully written in TypeScript for better maintainability and developer experience.
+- **ORM & Database Management**: **Prisma** for type-safe database queries, schema management, and seeding.
 - **Centralized Configuration**: Environment variables are managed and validated using `Joi` to prevent runtime errors due to missing configs.
 - **Database & Caching**: 
   - **PostgreSQL** for structured data storage.
   - **Redis** for caching and real-time features.
 - **Dockerized Workflow**: Seamless setup with `docker-compose` for the app, database, and Redis.
 - **Developer Tooling**: Integrated with ESLint, Prettier, and Nodemon for a smooth development workflow.
+- **Health Checks**: Monitor system status via the `/health` endpoint (DB & Redis connectivity).
+- **Graceful Shutdown**: Handles `SIGINT` and `SIGTERM` signals to cleanly close Database and Redis connections.
 
 ---
 
@@ -26,6 +29,7 @@ The project is containerized using **Docker** to ensure consistent development a
 - **Runtime**: [Node.js](https://nodejs.org/)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Framework**: [Express.js](https://expressjs.com/)
+- **ORM**: [Prisma](https://www.prisma.io/)
 - **Database**: [PostgreSQL](https://www.postgresql.org/)
 - **Cache/Message Broker**: [Redis](https://redis.io/)
 - **Validation**: [Joi](https://joi.dev/)
@@ -38,16 +42,20 @@ The project is containerized using **Docker** to ensure consistent development a
 ```bash
 real-time-task-manager/
 ├── backend/                # Backend Application
+│   ├── prisma/             # Database Schema & Seed scripts
+│   │   ├── schema.prisma
+│   │   └── seed.ts
 │   ├── src/
 │   │   ├── config/         # Environment config & validation
 │   │   ├── controllers/    # Route logic & request handling
-│   │   ├── middleware/     # Express middleware
+│   │   ├── middleware/     # Express logic (Validation, Error Handling)
 │   │   ├── routes/         # API route definitions
-│   │   ├── services/       # Business logic (e.g., RedisService)
+│   │   ├── services/       # Business logic (DB, Redis)
 │   │   ├── utils/          # Helper utilities
 │   │   ├── app.ts          # App setup
 │   │   └── server.ts       # Entry point
 │   ├── docker-compose.yml  # Container orchestration
+│   ├── Dockerfile          # App container definition
 │   └── package.json        # Dependencies & scripts
 └── frontend/               # Frontend Application (Upcoming)
 ```
@@ -95,6 +103,14 @@ Follow these steps to set up the project locally.
     docker-compose up -d postgres redis redis-insight
     ```
 
+6.  **Initialize Database (Prisma):**
+    Run the following commands to generate the Prisma client and seed the database.
+    ```bash
+    npx prisma generate
+    npx prisma db push
+    npx prisma db seed
+    ```
+
 ### Running the Application
 
 *   **Development Mode** (with hot-reload):
@@ -119,11 +135,18 @@ Follow these steps to set up the project locally.
 
 ## 🔌 API Documentation
 
-*Currently, the API architecture is being established. Routes will be documented here as they are added.*
-
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| `GET` | `/health` | (Planned) Health check endpoint |
+| `GET` | `/health` | Health check endpoint (Returns 200/503) |
+| `GET` | `/api/v1/users` | List all users |
+| `POST` | `/api/v1/users` | Create a new user |
+| `GET` | `/api/v1/users/:id` | Get user by ID |
+| `GET` | `/api/v1/projects` | List all projects |
+| `POST` | `/api/v1/projects` | Create a new project |
+| `GET` | `/api/v1/projects/:id` | Get project details (with tasks) |
+| `GET` | `/api/v1/tasks` | List/Filter tasks |
+| `POST` | `/api/v1/tasks` | Create a new task |
+| `PUT` | `/api/v1/tasks/:id` | Update task status/assignee |
 
 ---
 
@@ -134,7 +157,7 @@ The `docker-compose.yml` file orchestrates the following services:
 | Service | Internal Port | Host Port | Description |
 | :--- | :--- | :--- | :--- |
 | `app` | `8080` | `8080` | The Node.js Backend API |
-| `postgres` | `5432` | `5432` | Primary Database |
+| `postgres` | `5432` | `5433` | Primary Database (Mapped to 5433 to avoid conflicts) |
 | `redis` | `6379` | `6379` | Caching & Pub/Sub Layer |
 | `redis-insight` | `5540` | `5540` | GUI for managing Redis |
 
@@ -154,8 +177,8 @@ Access **Redis Insight** at `http://localhost:5540` to visualize Redis data.
 
 ## 🔮 Future Roadmap
 
+- [x] Create core Task CRUD endpoints.
 - [ ] Implement robust User Authentication (JWT).
-- [ ] Create core Task CRUD endpoints.
 - [ ] Integrate Real-time updates using Socket.io or SSE (via Redis).
 - [ ] Develop the Frontend (React/Next.js/Vue).
 - [ ] Add Comprehensive Unit & Integration Tests.

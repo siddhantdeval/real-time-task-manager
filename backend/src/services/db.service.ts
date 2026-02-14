@@ -80,5 +80,41 @@ prismaClient.$on('error', (e) => {
   }));
 });
 
+// DB Service Methods
+const connect = async () => {
+  try {
+    await prismaClient.$connect();
+    console.log('Database: Successfully connected');
+  } catch (error) {
+    console.error('Database: Connection failed', error);
+    process.exit(1);
+  }
+};
+
+const disconnect = async () => {
+  try {
+    await prismaClient.$disconnect();
+    console.log('Database: Disconnected gracefully');
+  } catch (error) {
+    console.error('Database: Disconnect failed', error);
+  }
+};
+
+const healthCheck = async (): Promise<boolean> => {
+  try {
+    await prismaClient.$queryRaw`SELECT 1`;
+    return true;
+  } catch (error) {
+    console.error('Database: Health check failed', error);
+    return false;
+  }
+};
+
+export const dbService = {
+  client: db,
+  connect,
+  disconnect,
+  healthCheck,
+};
 export { db };
 export type DBClient = typeof db;

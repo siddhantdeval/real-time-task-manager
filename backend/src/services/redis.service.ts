@@ -57,6 +57,34 @@ class RedisService {
     }
     return this.client;
   }
+
+  /**
+   * Gracefully close the Redis connection.
+   * key feature: Handles potential race conditions by checking client existence.
+   */
+  public async quit(): Promise<void> {
+    if (this.client) {
+      console.log('Redis: Closing connection...');
+      try {
+        await this.client.quit();
+      } catch (error) {
+        // Ignore errors during quit, as we are shutting down anyway
+        console.warn('Redis: Error during quit:', error);
+      }
+      this.client = null;
+      console.log('Redis: Connection closed gracefully');
+    }
+  }
+  public async healthCheck(): Promise<boolean> {
+    try {
+      if (!this.client) return false;
+      const response = await this.client.ping();
+      return response === 'PONG';
+    } catch (error) {
+      console.error('Redis: Health check failed', error);
+      return false;
+    }
+  }
 }
 
 export const redisService = new RedisService();
