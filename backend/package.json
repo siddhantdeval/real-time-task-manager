@@ -8,7 +8,8 @@
     "dev": "nodemon src/server.ts",
     "build": "tsc",
     "lint": "eslint src/**/*.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:integration": "docker compose -f docker-compose.test.yml up -d --wait && jest src/services/redis.service.test.ts && docker compose -f docker-compose.test.yml down"
   },
   "keywords": [],
   "author": "",
@@ -29,13 +30,16 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/ioredis": "^4.28.10",
+    "@types/jest": "^30.0.0",
     "@types/joi": "^17.2.2",
     "@types/morgan": "^1.9.10",
     "@types/node": "^25.2.3",
     "eslint": "^10.0.0",
+    "jest": "^30.2.0",
     "nodemon": "^3.1.11",
     "prettier": "^3.8.1",
     "prisma": "^6.19.2",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
