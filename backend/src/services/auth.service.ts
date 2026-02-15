@@ -84,6 +84,22 @@ class AuthService {
   public async logoutUser(sessionId: string): Promise<void> {
     await sessionService.deleteSession(sessionId);
   }
+
+  public async getUserProfile(userId: string): Promise<any> {
+    const user = await this.db.user.findUnique({
+      where: { id: userId },
+      select: { id: true, email: true, role: true, avatar_url: true, created_at: true },
+    });
+
+    if (!user) {
+      const error = new Error('User not found');
+      (error as any).statusCode = 404;
+      throw error;
+    }
+
+    return user;
+  }
 }
+
 
 export const authService = new AuthService();
