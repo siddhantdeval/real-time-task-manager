@@ -4,3 +4,6 @@ dist
 .env
 .DS_Store
 src/generated/prisma
+docs
+learning
+tests
