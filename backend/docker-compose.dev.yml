@@ -3,20 +3,22 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: builder
     container_name: task_manager_app
     ports:
-      - "8080:8080"
-      - "9229:9229" # Debug port
+      - '8080:8080'
+      - '9229:9229' # Debug port
     environment:
       - PORT=8080
       - DB_URL=postgres://sid:123456@postgres:5432/task_manager
       - REDIS_URL=redis://redis:6379
       - NODE_ENV=development
-    # command: npm run dev:debug # Uncomment to run in debug mode with hot-reload
-    # volumes:
-    #   - .:/app
-    #   - /app/node_modules
+    command: npm run dev:debug
+    volumes:
+      - .:/app
+      - /app/node_modules # Persistent volume to avoid host node_modules conflict
     env_file:
+      - .env.development
       - .env
 
     depends_on:
@@ -49,7 +51,7 @@ services:
     image: postgres:15-alpine
     container_name: task_manager_postgres
     ports:
-      - "5433:5432" # changed port to 5433 to avoid port conflict
+      - '5433:5432' # changed port to 5433 to avoid port conflict
     environment:
       - POSTGRES_USER=sid
       - POSTGRES_PASSWORD=123456
@@ -57,21 +59,21 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U sid -d task_manager"]
+      test: ['CMD-SHELL', 'pg_isready -U sid -d task_manager']
       interval: 5s
       timeout: 5s
       retries: 5
     networks:
       - app-network
     restart: unless-stopped
-    
+
   redis:
     image: redis:8-alpine
     container_name: task_manager_redis
     volumes:
       - redisdata:/data
     ports:
-      - "6379:6379"
+      - '6379:6379'
     command: redis-server --appendonly yes # Enable logging of write operations to disk for persistence. restore data after restart.
     # healthcheck:
     #   test: ["CMD-SHELL", "redis-cli ping"]
@@ -81,17 +83,16 @@ services:
     networks:
       - app-network
     restart: unless-stopped
-    
-  redis-insight:     
-    image: redis/redisinsight 
+
+  redis-insight:
+    image: redis/redisinsight
     container_name: task_manager_redis_insight
     ports:
-      - "5540:5540"
+      - '5540:5540'
     networks:
       - app-network
     restart: unless-stopped
 
-    
 networks:
   app-network:
     driver: bridge

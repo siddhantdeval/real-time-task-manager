@@ -22,8 +22,12 @@
       "address": "localhost",
       "localRoot": "${workspaceFolder}",
       "remoteRoot": "/app",
+      "sourceMaps": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ],
       "skipFiles": ["<node_internals>/**"]
-
     }
   ]
 }

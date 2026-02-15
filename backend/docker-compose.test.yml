@@ -1,14 +1,55 @@
-
-
 services:
+  app-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder # Use builder for tests to have devDeps
+    container_name: task_manager_app_test
+    command: npm test
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=test
+      - PORT=8081
+      - DB_URL=postgres://test_user:test_pass@postgres-test:5432/task_manager_test
+      - REDIS_URL=redis://redis-test:6379
+      - JWT_SECRET=test_secret
+    networks:
+      - test-network
+
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: task_manager_postgres_test
+    ports:
+      - '5434:5432'
+    environment:
+      - POSTGRES_USER=test_user
+      - POSTGRES_PASSWORD=test_pass
+      - POSTGRES_DB=task_manager_test
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U test_user -d task_manager_test']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
   redis-test:
     image: redis:8-alpine
+    container_name: task_manager_redis_test
     ports:
-      - "6380:6379"
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+      - '6380:6379'
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 1s
-      timeout: 3s
-      retries: 30
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge
