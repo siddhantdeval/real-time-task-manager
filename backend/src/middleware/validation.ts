@@ -12,44 +12,25 @@ export const validate = (schema: Joi.ObjectSchema) => {
   };
 };
 
-// User Schemas
-export const createUserSchema = Joi.object({
-  email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
-  role: Joi.string().valid('admin', 'member').default('member'),
-});
+export { 
+  createUserSchema, 
+  updateUserSchema 
+} from '../dto/user.dto';
 
-export const registerSchema = Joi.object({
-  email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
-});
+export { 
+  createProjectSchema, 
+  updateProjectSchema 
+} from '../dto/project.dto';
 
-export const loginSchema = Joi.object({
-  email: Joi.string().email().required(),
-  password: Joi.string().required(),
-});
+export { 
+  registerSchema, 
+  loginSchema, 
+  googleLoginSchema 
+} from '../dto/auth.dto';
 
-export const googleLoginSchema = Joi.object({
-  token: Joi.string().required(),
-});
+export { 
+  createTaskSchema, 
+  updateTaskSchema 
+} from '../dto/task.dto';
 
-export const updateUserSchema = Joi.object({
-  email: Joi.string().email(),
-  password: Joi.string().min(6),
-  role: Joi.string().valid('admin', 'member'),
-});
-
-// Project Schemas
-export const createProjectSchema = Joi.object({
-  name: Joi.string().required(),
-  description: Joi.string().allow('', null),
-  owner_id: Joi.string().uuid().required(),
-});
-
-export const updateProjectSchema = Joi.object({
-  name: Joi.string(),
-  description: Joi.string().allow('', null),
-});
-
-export { createTaskSchema, updateTaskSchema } from '../dto/task.dto';
 
