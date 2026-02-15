@@ -11,7 +11,7 @@ description: Update backend learning documentation and technical docs based on r
    - Target Directory: `backend/learning/` (e.g., `nodejs_learning.md`, `redis_learning.md`).
    - Action:
      - Check if a relevant markdown file exists in `backend/learning/`.
-     - Append new learnings using the following strict format:
+     - Append new learnings using the following strict format:e
        - **Topic/Concept**
        - **Context** (Backend-specific reasoning)
        - **Implementation** (Reference `backend/src/...` files)
@@ -24,12 +24,12 @@ description: Update backend learning documentation and technical docs based on r
      - Update `backend/docs/data_flow.md` if data flow involves new backend services.
      - Update `backend/docs/authentication_system.md` if `backend/src/services/auth.service.ts` or related middleware changed.
 
-4. **Verify Backend correctness (Optional Command)**:
+4. **Ask to Verify Backend correctness (Optional Command)**:
    - If unsure about a change, verify by running tests strictly in the backend directory:
    - // turbo
      ```bash
      cd backend && npm run test --if-present
      ```
 
-5. **Commit Changes**:
+5. **Ask to Commit Changes**:
    - Commit message must be prefixed with `docs(backend):`.
