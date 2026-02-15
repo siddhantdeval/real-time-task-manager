@@ -17,9 +17,26 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+      migrator:
+        condition: service_completed_successfully
     networks:
       - app-network
     restart: unless-stopped
+
+  migrator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: task_manager_migrator
+    command: npx prisma migrate deploy
+    environment:
+      - DB_URL=postgres://sid:123456@postgres:5432/task_manager
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
 
   postgres:
     image: postgres:15-alpine

@@ -15,7 +15,7 @@ async function main() {
     update: {},
     create: {
       email: adminEmail,
-      password_hash: 'hashedpassword123', // In a real app, hash this!
+      password_hash: 'admin123', // In a real app, hash this!
       role: Role.admin,
       owned_projects: {
         create: {
@@ -47,7 +47,7 @@ async function main() {
     update: {},
     create: {
       email: memberEmail,
-      password_hash: 'hashedpassword456',
+      password_hash: 'member123',
       role: Role.member,
       owned_projects: {
         create: {
