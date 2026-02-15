@@ -4,23 +4,25 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Backend: Debug (Nodemon)",
+      "name": "Backend: Local Debug (Nodemon)",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": ["run", "dev:debug"],
       "restart": true,
+
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "skipFiles": ["<node_internals>/**"]
+      "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}/backend"
     },
     {
       "type": "node",
-      "request": "launch",
-      "name": "Backend: Debug (TS-Node)",
-      "args": ["src/server.ts"],
-      "runtimeArgs": ["-r", "ts-node/register"],
-      "sourceMaps": true,
-      "cwd": "${workspaceFolder}/backend",
-      "console": "integratedTerminal"
+      "request": "attach",
+      "name": "Backend: Attach to Docker",
+      "port": 9229,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}/backend",
+      "remoteRoot": "/app",
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

@@ -6,12 +6,19 @@ services:
     container_name: task_manager_app
     ports:
       - "8080:8080"
+      - "9229:9229" # Debug port
     environment:
       - PORT=8080
       - DB_URL=postgres://sid:123456@postgres:5432/task_manager
       - REDIS_URL=redis://redis:6379
+      - NODE_ENV=development
+    # command: npm run dev:debug # Uncomment to run in debug mode with hot-reload
+    # volumes:
+    #   - .:/app
+    #   - /app/node_modules
     env_file:
       - .env
+
     depends_on:
       postgres:
         condition: service_healthy
