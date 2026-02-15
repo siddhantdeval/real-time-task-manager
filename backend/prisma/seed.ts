@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { PrismaClient, Role, Status, Priority } from '../src/generated/prisma';
+import { hashPassword } from '../src/utils/password';
 
 const prisma = new PrismaClient();
 
@@ -8,14 +9,17 @@ async function main() {
 
   const adminEmail = 'admin@example.com';
   const memberEmail = 'member@example.com';
+  const hashedPassword = await hashPassword('password123'); // Standard password
 
   // Create Admin User
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
-    update: {},
+    update: {
+      password_hash: hashedPassword,
+    },
     create: {
       email: adminEmail,
-      password_hash: 'admin123', // In a real app, hash this!
+      password_hash: hashedPassword,
       role: Role.admin,
       owned_projects: {
         create: {
@@ -44,10 +48,12 @@ async function main() {
   // Create Member User
   const member = await prisma.user.upsert({
     where: { email: memberEmail },
-    update: {},
+    update: {
+      password_hash: hashedPassword,
+    },
     create: {
       email: memberEmail,
-      password_hash: 'member123',
+      password_hash: hashedPassword,
       role: Role.member,
       owned_projects: {
         create: {
@@ -67,7 +73,9 @@ async function main() {
     },
   });
 
-  const adminProject = await prisma.project.findFirst({ where: { owner: { email: adminEmail } } });
+  const adminProject = await prisma.project.findFirst({
+    where: { owner: { email: adminEmail } },
+  });
 
   if (adminProject) {
     await prisma.task.create({

@@ -12,8 +12,6 @@ if (result.error) {
   console.warn(`Warning: .env file not found at ${envPath}`);
 }
 
-
-
 const { error, value: envVars } = environmentSchema.validate(process.env, {
   abortEarly: false,
 });
@@ -34,9 +32,6 @@ export const config = {
   },
   redis: {
     url: envVars.REDIS_URL,
-  },
-  jwt: {
-    secret: envVars.JWT_SECRET,
   },
   logLevel: envVars.LOG_LEVEL,
   sessionTTL: envVars.SESSION_TTL || 86400, // Default to 24 hours

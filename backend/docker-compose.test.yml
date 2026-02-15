@@ -16,7 +16,6 @@ services:
       - PORT=8081
       - DB_URL=postgres://test_user:test_pass@postgres-test:5432/task_manager_test
       - REDIS_URL=redis://redis-test:6379
-      - JWT_SECRET=test_secret
     networks:
       - test-network
 
