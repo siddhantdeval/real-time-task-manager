@@ -51,23 +51,5 @@ export const updateProjectSchema = Joi.object({
   description: Joi.string().allow('', null),
 });
 
-// Task Schemas
-export const createTaskSchema = Joi.object({
-  title: Joi.string().required(),
-  description: Joi.string().allow('', null),
-  status: Joi.string().valid('todo', 'in_progress', 'done').default('todo'),
-  priority: Joi.string().valid('low', 'medium', 'high').default('medium'),
-  due_date: Joi.date().iso().allow(null),
-  project_id: Joi.string().uuid().required(),
-  assignee_id: Joi.string().uuid().allow(null),
-});
+export { createTaskSchema, updateTaskSchema } from '../dto/task.dto';
 
-export const updateTaskSchema = Joi.object({
-  title: Joi.string(),
-  description: Joi.string().allow('', null),
-  status: Joi.string().valid('todo', 'in_progress', 'done'),
-  priority: Joi.string().valid('low', 'medium', 'high'),
-  due_date: Joi.date().iso().allow(null),
-  project_id: Joi.string().uuid(),
-  assignee_id: Joi.string().uuid().allow(null),
-});
