@@ -1,77 +1,93 @@
 # System Data Flow
 
-This document outlines how data moves through the backend application, from the incoming request to the database and back.
+This document details how information travels through the Real-Time Task Manager backend.
 
-## 1. Request Lifecycle (Layered Architecture)
-
-The application follows a strict **Controller-Service** pattern to ensure separation of concerns.
+## 1. Request Lifecycle
+We follow a streamlined **Controller-Service** architecture. Each layer has a specific, non-overlapping responsibility.
 
 ```mermaid
 graph TD
-    Client[Client / Frontend] <-->|HTTP JSON| Router[Express Router]
-    Router <-->|Req/Res| Middleware[Middleware Layer]
-    Middleware <-->|Validated DTO| Controller[Controllers]
-    Controller <-->|Domain Objects| Service[Services]
-    Service <-->|ORM & Key-Value| PersistenceLayer[DB & Redis]
+    subgraph Frontend
+        Client[Web/Mobile App]
+    end
+
+    subgraph "API Layer (Express)"
+        Router[Router]
+        Middleware[Middleware: Auth & Validation]
+        Controller[Controller: Req/Res Handler]
+    end
+
+    subgraph "Logic Layer"
+        Service[Service: Business Logic]
+        DTO[DTO: Joi Validation Schema]
+    end
+
+    subgraph "Persistence Layer"
+        Prisma[Prisma Client: PostgreSQL]
+        Redis[Redis Client: Session/Cache]
+    end
+
+    Client <-->|HTTP JSON| Router
+    Router <-->|Pipe| Middleware
+    Middleware <-->|Validated Data| Controller
+    Controller <-->|Calls| Service
+    Service <-->|Validates| DTO
+    Service <-->|Queries| Prisma
+    Service <-->|Accesses| Redis
 ```
 
-
-### Layers Description
-1.  **Router & Middleware**: 
-    -   Handles Routing (`/api/v1/...`).
-    -   **Validation**: Joi schemas validate headers/body before reaching controllers.
-    -   **Auth**: Verifies Session IDs via Redis.
-    
-2.  **Controller Layer**:
-    -   Parses the request (query params, body).
-    -   Calls the appropriate `Service` method.
-    -   Formatted the HTTP response (Status codes, JSON structure).
-    -   *Crucial*: Controllers **never** access the database directly.
-
-3.  **Service Layer**:
-    -   Contains all **Business Logic**.
-    -   interacts with Prisma (PostgreSQL) and Redis.
-    -   Handles data transformation and error throwing.
-
-4.  **Data Layer**:
-    -   **Prisma Client**: Type-safe database queries.
-    -   **Redis Client**: Session management and caching.
+### Layer Responsibilities
+| Layer | Responsibility |
+| :--- | :--- |
+| **Router** | Maps HTTP paths and methods to specific controllers. |
+| **Middleware** | Handles cross-cutting concerns (Authentication, Global Error Handling, Request Logging). |
+| **Controller** | Extracts parameters (params, query, body), calls services, and formats the HTTP response. |
+| **Service** | The "Core" - implements business rules, performs database operations via Prisma, and interacts with Redis. |
+| **DTO** | Defines the "shape" of incoming data and provides validation logic via Joi. |
 
 ---
 
-## 2. Error Handling Flow
-
-Errors are propagated up the stack and caught by a centralized Error Handling Middleware.
+## 2. Validation Flow
+Validation occurs in two stages to ensure data integrity:
+1. **Schema Validation**: Middleware Uses Joi DTOs to reject malformed requests before they hit the controller.
+2. **Business Validation**: Services perform deeper checks (e.g., "Does this user own the project they are adding a task to?").
 
 ```mermaid
 sequenceDiagram
-    participant C as Controller
+    participant C as Client
+    participant M as Validation Middleware
     participant S as Service
-    participant D as Database
-    participant M as Error Middleware
+    participant DB as Database
 
-    C->>S: executeTask()
-    S->>D: findUnique()
-    D--xS: DB Error (Constraint Violation)
-    S--xC: Throw AppError / Error
-    C--xM: next(error)
-    M-->>M: Log Error (Winston)
-    M-->>C: Format Error Response (JSON)
+    C->>M: POST /tasks { title: "..." }
+    M->>M: Joi Schema Check
+    alt Invalid Schema
+        M-->>C: 400 Bad Request
+    else Valid Schema
+        M->>S: createTask(...)
+        S->>DB: Check Project Ownership
+        alt Not Owner
+            S-->>C: 403 Forbidden
+        else Authorized
+            S->>DB: create()
+            S-->>C: 201 Created
+        end
+    end
 ```
-
--   **Operational Errors**: (e.g., 400 Bad Request, 404 Not Found) are thrown explicitly.
--   **System Errors**: (e.g., DB connection fail) are caught and converted to 500 Internal Server Error.
 
 ---
 
-## 3. Real-Time Data Flow (Planned)
+## 3. Real-Time Sync (Pub/Sub)
+Updates are pushed to clients using a Redis-backed event system.
 
-For real-time updates (e.g., "Task Updated" notifications), we utilize Redis Pub/Sub.
+1. **Trigger**: A service performs a write operation (e.g., `updateTask`).
+2. **Publish**: The service publishes an event to a specific Redis channel.
+3. **Notify**: Real-time handlers (SSE/WebSockets) subscribed to that channel push the update to connected clients.
 
 ```mermaid
 graph LR
-    UserA[User A] -->|Update Task| API
-    API -->|Publish Event| Redis[(Redis Pub/Sub)]
-    Redis -->|Subscribe Info| SSE[SSE / Socket Service]
-    SSE -->|Push Event| UserB[User B]
+    API[API Instance] -->|1. Update| DB[(PostgreSQL)]
+    API -->|2. Publish| Redis[(Redis Pub/Sub)]
+    Redis -->|3. Broadcast| SSE[SSE / Socket Service]
+    SSE -->|4. Push| UI[Frontend UI]
 ```

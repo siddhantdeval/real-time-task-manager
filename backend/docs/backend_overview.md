@@ -1,47 +1,44 @@
 # Backend Overview
 
 ## 📖 Introduction
-
-The Backend service for the Real-time Task Manager is designed for scalability and performance. It handles task management operations, user authentication, and real-time capabilities.
+The Backend service for the Real-time Task Manager is a high-performance, scalable Node.js application. It manages tasks, projects, and users, while providing real-time synchronization capabilities.
 
 ## 🛠 Tech Stack
-
 - **Runtime**: [Node.js](https://nodejs.org/) (v18+)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Framework**: [Express.js](https://expressjs.com/)
-- **ORM**: [Prisma](https://www.prisma.io/)
-- **Database**: [PostgreSQL](https://www.postgresql.org/)
-- **Cache/PubSub**: [Redis](https://redis.io/)
+- **ORM**: [Prisma](https://www.prisma.io/) (PostgreSQL)
+- **Cache/Session**: [Redis](https://redis.io/)
 - **Validation**: [Joi](https://joi.dev/)
-- **Infrastructure**: [Docker](https://www.docker.com/) & Docker Compose
+- **Logging**: Winston & Morgan
+- **Infrastructure**: Docker & Docker Compose
 
 ## 📂 Project Structure
-
-```bash
+```text
 backend/
-├── prisma/             # Database Schema & Seed scripts
+├── prisma/             # Database Schema & Migrations
 ├── src/
-│   ├── config/         # Environment config & validation
-│   ├── controllers/    # Route logic & request handling
+│   ├── config/         # App configuration & env validation
+│   ├── controllers/    # Request handlers (HTTP layer)
 │   ├── dto/            # Data Transfer Objects & Joi schemas
-│   ├── middleware/     # Express logic (Validation, Auth, Errors)
-│   ├── routes/         # API route definitions
-│   ├── services/       # Business logic (DB, Redis, Auth)
-│   ├── utils/          # Helper utilities
-│   ├── app.ts          # App setup
-│   └── server.ts       # Entry point
-├── docker-compose.yml  # Container orchestration
-└── package.json        # Dependencies & scripts
+│   ├── middleware/     # Auth, Validation, & Error handlers
+│   ├── routes/         # API endpoint definitions
+│   ├── services/       # Business logic & Persistence interaction
+│   ├── utils/          # Helpers & Shared utilities
+│   ├── app.ts          # Express app setup
+│   └── server.ts       # Server entry point
+└── docker-compose.yml  # Local services orchestration
 ```
 
-## 🚀 Features
+## 🚀 Key Architectural Decisions
+1. **Controller-Service Pattern**: We use a two-tier architecture where Controllers handle HTTP concerns and Services handle business logic and direct database/cache interactions.
+2. **DTO-Based Validation**: All incoming request bodies are validated against Joi schemas defined in the `src/dto/` directory before reaching the application logic.
+3. **Session-Based Auth (Redis)**: State-of-the-art authentication using secure session cookies backed by Redis for sub-millisecond validation.
+4. **Resilient Persistence**: Prisma ORM provides type-safe access to PostgreSQL, ensuring data integrity and developer productivity.
+5. **Horizontal Scalability**: The application is stateless (sessions in Redis), allowing for easy scaling across multiple containers.
 
-- **Robust API**: Modular Express.js architecture.
-- **Type Safety**: Full TypeScript implementation.
-- **Database**: PostgreSQL with Prisma ORM for type-safe queries.
-- **Caching**: Redis for session storage and high-performance data access.
-- **Authentication**: Secure Session-based Auth (see [Authentication System](authentication_system.md)).
-- **Data Flow**: Layered architecture ensuring separation of concerns (see [Data Flow](data_flow.md)).
-- **Health Checks**: `/health` endpoint for monitoring DB and Redis connectivity.
-- **Graceful Shutdown**: Handles SIGINT/SIGTERM for clean connection closing.
-- **Automated Workflows**: Agentic workflows for documentation.
+## 🔗 Related Documentation
+- [API Reference](api_reference.md)
+- [Authentication System](authentication_system.md)
+- [Data Flow](data_flow.md)
+- [OpenAPI Spec](openapi.yaml)

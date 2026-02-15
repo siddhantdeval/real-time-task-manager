@@ -23,7 +23,9 @@ components:
           format: uuid
         name:
           type: string
+          minLength: 3
         description:
+
           type: string
           nullable: true
         owner_id:
