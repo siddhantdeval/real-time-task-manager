@@ -17,10 +17,20 @@ The backend is built using **Node.js** with **Express** and **TypeScript**. It f
 ### Project Structure
 The project follows a standard layered architecture:
 - `src/config`: Centralized configuration and environment variable validation.
-- `src/controllers`: Request handlers.
-- `src/services`: Business logic (implied).
+- `src/controllers`: Request handlers (HTTP interface).
+- `src/services`: Business logic and database interactions.
+- `src/dto`: Data Transfer Objects and Joi validation schemas.
 - `src/routes`: API route definitions.
 - `src/middleware`: Request processing (Auth, Validation).
+
+### Design Pattern: Controller-Service
+**Approach**: We use a two-tier architecture of Controllers and Services.
+- **Controllers** are responsible for parsing requests, extracting data, and returning responses. They do **not** contain business logic or direct database queries.
+- **Services** are where the "heavy lifting" happens. They handle validation rules, security checks (e.g., project ownership), and directly interact with the Prisma client.
+- **DTOs (Data Transfer Objects)**: We use DTOs to define the expected structure of incoming data. These are validated using **Joi** schemas before reaching the service layer.
+
+**Why no Repository?**: For 90% of CRUD operations, Prisma's client already acts as a robust data access layer. Adding a separate Repository often results in "pass-through" code that adds boilerplate without significant benefit.
+
 
 ## 2. Key Considerations & Learnings
 

@@ -4,7 +4,7 @@ This document outlines how data moves through the backend application, from the 
 
 ## 1. Request Lifecycle (Layered Architecture)
 
-The application follows a strict **Controller-Service-Repository** pattern to ensure separation of concerns.
+The application follows a strict **Controller-Service** pattern to ensure separation of concerns.
 
 ```mermaid
 graph TD
@@ -12,9 +12,9 @@ graph TD
     Router <-->|Req/Res| Middleware[Middleware Layer]
     Middleware <-->|Validated DTO| Controller[Controllers]
     Controller <-->|Domain Objects| Service[Services]
-    Service <-->|ORM Models| DB[(PostgreSQL / Prisma)]
-    Service <-->|Key-Value| Redis[(Redis Cache)]
+    Service <-->|ORM & Key-Value| PersistenceLayer[DB & Redis]
 ```
+
 
 ### Layers Description
 1.  **Router & Middleware**: 

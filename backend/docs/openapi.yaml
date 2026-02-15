@@ -44,6 +44,8 @@ components:
           format: uuid
         title:
           type: string
+          minLength: 3
+
         description:
           type: string
           nullable: true
@@ -328,7 +330,27 @@ paths:
       summary: List tasks
       security:
         - cookieAuth: []
+      parameters:
+        - in: query
+          name: project_id
+          schema:
+            type: string
+            format: uuid
+          description: Filter by project UUID
+        - in: query
+          name: assignee_id
+          schema:
+            type: string
+            format: uuid
+          description: Filter by assignee UUID
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [todo, in_progress, done]
+          description: Filter by status
       responses:
+
         '200':
           description: List of tasks
           content:
@@ -356,6 +378,8 @@ paths:
               properties:
                 title:
                   type: string
+                  minLength: 3
+
                 description:
                   type: string
                 status:

@@ -40,5 +40,13 @@ See [Authentication System](authentication_system.md) for detailed Auth API docu
 | Method | Endpoint | Description | Protected |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/tasks` | List/Filter tasks | Yes |
+| `GET` | `/tasks/:id` | Get task details | Yes |
 | `POST` | `/tasks` | Create a new task | Yes |
-| `PUT` | `/tasks/:id` | Update task status/assignee | Yes |
+| `PUT` | `/tasks/:id` | Update task details | Yes |
+| `DELETE` | `/tasks/:id` | Delete a task | Yes |
+
+**Query Parameters for `GET /tasks`**:
+- `project_id`: Filter by Project UUID
+- `assignee_id`: Filter by User UUID
+- `status`: Filter by status (`todo`, `in_progress`, `done`)
+

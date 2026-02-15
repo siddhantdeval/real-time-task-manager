@@ -23,6 +23,7 @@ backend/
 ├── src/
 │   ├── config/         # Environment config & validation
 │   ├── controllers/    # Route logic & request handling
+│   ├── dto/            # Data Transfer Objects & Joi schemas
 │   ├── middleware/     # Express logic (Validation, Auth, Errors)
 │   ├── routes/         # API route definitions
 │   ├── services/       # Business logic (DB, Redis, Auth)

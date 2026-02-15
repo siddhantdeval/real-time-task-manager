@@ -59,6 +59,15 @@ The database schema is defined in `prisma/schema.prisma`.
   }
   ```
 
+### Data Access Architectural Decision
+**Context**: Initially considered a Repository pattern but pivoted to a **Service-Direct-to-Client** approach.
+**Decision**: Interactions with PostgreSQL are handled directly within services using the `db` (Prisma) client.
+**Why**: 
+- **Boilerplate Reduction**: Prisma's API is type-safe and feature-rich enough that a repository layer often becomes redundant.
+- **Maintainability**: Direct access makes the code easier to read and follow for most tasks.
+- **Flexibility**: Complex transactions and relationships are easier to manage when not constrained by a generic repository interface.
+
+
 ## 4. Pros/Cons
 
 **Pros**:
