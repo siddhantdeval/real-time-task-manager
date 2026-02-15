@@ -8,8 +8,11 @@ import {
   getProjectsByUser,
 } from '../controllers/project.controller';
 import { validate, createProjectSchema, updateProjectSchema } from '../middleware/validation';
+import { authenticate } from '../middleware/auth.middleware';
 
 const router = Router();
+
+router.use(authenticate);
 
 router.get('/', getProjects);
 router.get('/:id', getProjectById);
@@ -19,3 +22,4 @@ router.delete('/:id', deleteProject);
 router.get('/user/:userId', getProjectsByUser);
 
 export default router;
+
