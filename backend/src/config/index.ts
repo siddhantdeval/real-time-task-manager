@@ -34,7 +34,8 @@ export const config = {
     url: envVars.REDIS_URL,
   },
   logLevel: envVars.LOG_LEVEL,
-  sessionTTL: envVars.SESSION_TTL || 86400, // Default to 24 hours
+  sessionTTL: envVars.SESSION_TTL || 86400, // Idle timeout: Default to 24 hours
+  absoluteSessionTTL: envVars.ABSOLUTE_SESSION_TTL || 604800, // Absolute timeout: Default to 7 days
   google: {
     clientId: envVars.GOOGLE_CLIENT_ID,
     clientSecret: envVars.GOOGLE_CLIENT_SECRET,
