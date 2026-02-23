@@ -2,6 +2,7 @@
 	"info": {
 		"_postman_id": "real-time-task-manager-collection",
 		"name": "Real-Time Task Manager",
+		"description": "Last updatedAt: 2026-02-23\n\nThis collection uses cookie-based session authentication. Logging in will automatically save your session cookie. Scripts are included to auto-capture userId, projectId snippet.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -56,7 +57,21 @@
 							]
 						}
 					},
-					"response": []
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData && jsonData.user && jsonData.user.id) {",
+									"    pm.environment.set(\"userId\", jsonData.user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
 				},
 				{
 					"name": "Login",
@@ -84,7 +99,21 @@
 							]
 						}
 					},
-					"response": []
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData && jsonData.user && jsonData.user.id) {",
+									"    pm.environment.set(\"userId\", jsonData.user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
 				},
 				{
 					"name": "Google Login",
@@ -215,7 +244,21 @@
 							]
 						}
 					},
-					"response": []
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData && jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"projectId\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
 				},
 				{
 					"name": "Update Project",
@@ -338,7 +381,21 @@
 							]
 						}
 					},
-					"response": []
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData && jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"taskId\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
 				},
 				{
 					"name": "Update Task",

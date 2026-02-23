@@ -1,5 +1,7 @@
 # Backend Overview
 
+> *Last updatedAt: 2026-02-23*
+
 ## 📖 Introduction
 The Backend service for the Real-time Task Manager is a high-performance, scalable Node.js application. It manages tasks, projects, and users, while providing real-time synchronization capabilities.
 

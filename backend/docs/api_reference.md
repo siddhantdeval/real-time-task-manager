@@ -1,5 +1,7 @@
 # API Reference
 
+> *Last updatedAt: 2026-02-23*
+
 All endpoints are prefixed with `/api/v1`.
 
 ## 🏥 Health & System

@@ -1,5 +1,7 @@
 # Authentication System Documentation
 
+> *Last updatedAt: 2026-02-23*
+
 ## Overview
 
 The Real-Time Task Manager implements a secure, scalable authentication system designed for high performance. It utilizes **Session-based Authentication** backed by **Redis**, ensuring that session validation is fast (sub-millisecond) and decoupled from the primary PostgreSQL database.
