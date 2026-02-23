@@ -25,8 +25,8 @@ const clearSessionCookie = (res: Response) => {
 };
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  const user = await authService.registerUser(email, password);
+  const { email, password, name } = req.body;
+  const user = await authService.registerUser(email, password, name);
   res.status(201).json({ message: 'User registered successfully', user });
 });
 

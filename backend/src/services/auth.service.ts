@@ -9,7 +9,7 @@ class AuthService {
     return dbService.client;
   }
 
-  public async registerUser(email: string, password: string): Promise<any> {
+  public async registerUser(email: string, password: string, name?: string): Promise<any> {
     const existingUser = await this.db.user.findUnique({ where: { email } });
     if (existingUser) {
       throw new Error('Email already exists');
@@ -20,6 +20,7 @@ class AuthService {
       data: {
         email,
         password_hash: hashedPassword,
+        name,
       },
     });
 
@@ -88,7 +89,7 @@ class AuthService {
   public async getUserProfile(userId: string): Promise<any> {
     const user = await this.db.user.findUnique({
       where: { id: userId },
-      select: { id: true, email: true, role: true, avatar_url: true, created_at: true },
+      select: { id: true, email: true, name: true, role: true, avatar_url: true, created_at: true },
     });
 
     if (!user) {
