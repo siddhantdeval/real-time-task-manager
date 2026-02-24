@@ -81,3 +81,16 @@ export const getMe = asyncHandler(async (req: Request, res: Response) => {
   const user = await authService.getUserProfile(userId);
   res.status(200).json({ user });
 });
+
+export const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
+  const { email } = req.body;
+  await authService.forgotPassword(email);
+  // Always return success to prevent email enumeration
+  res.status(200).json({ message: 'If an account with that email exists, a reset link has been sent.' });
+});
+
+export const resetPassword = asyncHandler(async (req: Request, res: Response) => {
+  const { token, password } = req.body;
+  await authService.resetPassword(token, password);
+  res.status(200).json({ message: 'Password reset successfully. You can now sign in.' });
+});

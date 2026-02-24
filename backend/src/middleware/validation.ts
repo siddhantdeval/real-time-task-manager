@@ -25,7 +25,9 @@ export {
 export { 
   registerSchema, 
   loginSchema, 
-  googleLoginSchema 
+  googleLoginSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
 } from '../dto/auth.dto';
 
 export { 

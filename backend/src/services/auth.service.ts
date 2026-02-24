@@ -100,7 +100,56 @@ class AuthService {
 
     return user;
   }
-}
+  public async forgotPassword(email: string): Promise<void> {
+    // Always succeed silently to prevent email enumeration
+    const user = await this.db.user.findUnique({ where: { email } });
+    if (!user) return;
 
+    const crypto = await import('crypto');
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+    const expires = new Date(Date.now() + 3600_000); // 1 hour
+
+    await this.db.user.update({
+      where: { id: user.id },
+      data: {
+        reset_token: hashedToken,
+        reset_token_expires: expires,
+      },
+    });
+
+    // TODO: Send via email service. For now log the reset link.
+    logger.info(`[PASSWORD RESET] Link: ${process.env.FRONTEND_URL || 'http://localhost:3001'}/reset-password?token=${rawToken}`);
+  }
+
+  public async resetPassword(rawToken: string, newPassword: string): Promise<void> {
+    const crypto = await import('crypto');
+    const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+
+    const user = await this.db.user.findFirst({
+      where: {
+        reset_token: hashedToken,
+        reset_token_expires: { gt: new Date() },
+      },
+    });
+
+    if (!user) {
+      const error = new Error('Invalid or expired password reset token');
+      (error as any).statusCode = 400;
+      throw error;
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+    await this.db.user.update({
+      where: { id: user.id },
+      data: {
+        password_hash: hashedPassword,
+        reset_token: null,
+        reset_token_expires: null,
+      },
+    });
+  }
+
+}
 
 export const authService = new AuthService();
