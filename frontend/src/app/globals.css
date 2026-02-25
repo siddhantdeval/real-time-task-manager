@@ -1,9 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: var(--color-indigo-600);
-  --color-primary-hover: var(--color-indigo-700);
+  --color-primary: #5348ea;
+  --color-primary-hover: #4338ca;
   
+  --color-background-light: #f6f6f8;
+  --color-background-dark: #121121;
+
   --color-success-bg: var(--color-emerald-100);
   --color-success-text: var(--color-emerald-700);
   
