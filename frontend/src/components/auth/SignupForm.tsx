@@ -5,7 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signupAction, SignupActionState } from "@/app/actions/auth";
+import { signupAction, SignupActionState } from "@/app/actions/auth.actions";
 
 export function SignupForm() {
   const [state, formAction, isPending] = useActionState<SignupActionState, FormData>(signupAction, {

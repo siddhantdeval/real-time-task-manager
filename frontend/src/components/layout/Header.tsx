@@ -1,6 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
-import { Search, Bell } from 'lucide-react';
+import { Search, Bell, Settings } from 'lucide-react';
+import { ThemeToggle } from '../theme/ThemeToggle';
+import { LogoutMenuItem } from '@/components/auth/LogoutMenuItem';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export function Header() {
   return (
@@ -15,7 +25,7 @@ export function Header() {
           </div>
           <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">TaskFlow</h2>
         </div>
-        <label className="flex flex-col min-w-40 !h-10 max-w-64 hidden md:flex">
+        <label className="flex flex-col min-w-40 h-10! max-w-64 md:flex">
           <div className="flex w-full flex-1 items-stretch rounded-lg h-full">
             <div className="text-slate-500 flex border-none bg-background-light dark:bg-slate-800 items-center justify-center pl-4 rounded-l-lg border-r-0">
               <Search className="size-5" />
@@ -25,17 +35,34 @@ export function Header() {
         </label>
       </div>
       <div className="flex flex-1 justify-end gap-8">
-        <div className="flex items-center gap-9 hidden lg:flex">
+        <div className="lg:flex items-center gap-9 hidden">
           <Link className="text-slate-900 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Dashboard</Link>
           <Link className="text-slate-900 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="/projects">Projects</Link>
           <Link className="text-slate-900 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Team</Link>
           <Link className="text-slate-900 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Reports</Link>
         </div>
         <div className="flex gap-2">
+          <ThemeToggle />
           <button className="flex size-10 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-background-light dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
             <Bell className="size-5" />
           </button>
-          <div className="bg-center bg-no-repeat bg-cover rounded-full size-10 border border-slate-200 dark:border-slate-700" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCidvrxSrBKm7nVGUk2NB0-7unSU2KUEhpPJMaZ2IQfpx6_znCFbPphfeIWTSqnl-7rvQBUTgpjm_4n-PHmGHLZPIWylxxQsLf2LK5gpcdcK4xj2shPrA3kUvTxOtiUoiGouTxG41wtrbdr-BsP_7-BxodhIu5fuSj9BmZMcWtPM9w47_ztwkHzeYR9kdnkDXJ26urhu3zIU9x5ibTq-aEMXMbCq87D-2nq6GCRCncggKYq-aAv7BEVDohbyZq42xat5NcBxBDbQDM")' }}></div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="bg-center bg-no-repeat bg-cover rounded-full size-10 border border-slate-200 dark:border-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-slate-900" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCidvrxSrBKm7nVGUk2NB0-7unSU2KUEhpPJMaZ2IQfpx6_znCFbPphfeIWTSqnl-7rvQBUTgpjm_4n-PHmGHLZPIWylxxQsLf2LK5gpcdcK4xj2shPrA3kUvTxOtiUoiGouTxG41wtrbdr-BsP_7-BxodhIu5fuSj9BmZMcWtPM9w47_ztwkHzeYR9kdnkDXJ26urhu3zIU9x5ibTq-aEMXMbCq87D-2nq6GCRCncggKYq-aAv7BEVDohbyZq42xat5NcBxBDbQDM")' }}></button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/settings/profile" className="cursor-pointer flex items-center w-full">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <LogoutMenuItem />
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
