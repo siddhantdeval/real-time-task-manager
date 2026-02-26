@@ -1,9 +1,9 @@
-# Last updatedAt: 2026-02-23
+# Last updated: 2026-02-27
 openapi: 3.0.3
 info:
   title: Real-Time Task Manager API
-  description: "API for managing projects, tasks, and users in real-time. (Last updatedAt: 2026-02-23)"
-  version: 1.0.0
+  description: "API for managing projects, tasks, and users in real-time. (Last updated: 2026-02-27)"
+  version: 1.1.0
 servers:
   - url: http://localhost:8080/api/v1
     description: Local Development Server
@@ -26,9 +26,15 @@ components:
           type: string
           minLength: 3
         description:
-
           type: string
           nullable: true
+        labelColor:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [ACTIVE, ARCHIVED]
+          default: ACTIVE
         owner_id:
           type: string
           format: uuid
@@ -38,7 +44,61 @@ components:
         updated_at:
           type: string
           format: date-time
-    
+
+    ProjectMember:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum: [LEAD, MEMBER, VIEWER]
+        user:
+          $ref: '#/components/schemas/UserSummary'
+
+    ProjectActivity:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        actorId:
+          type: string
+          format: uuid
+        action:
+          type: string
+          example: "created the project"
+        target:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        actor:
+          $ref: '#/components/schemas/UserSummary'
+
+    Progress:
+      type: object
+      properties:
+        total:
+          type: integer
+        done:
+          type: integer
+        percentage:
+          type: integer
+          minimum: 0
+          maximum: 100
+
     Task:
       type: object
       properties:
@@ -48,7 +108,6 @@ components:
         title:
           type: string
           minLength: 3
-
         description:
           type: string
           nullable: true
@@ -85,12 +144,41 @@ components:
         email:
           type: string
           format: email
+        name:
+          type: string
         role:
           type: string
           enum: [admin, member]
+        avatar_url:
+          type: string
+          nullable: true
         created_at:
           type: string
           format: date-time
+
+    UserSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        avatar_url:
+          type: string
+          nullable: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
 
 paths:
   /health:
@@ -108,7 +196,7 @@ paths:
                   status:
                     type: string
                     example: ok
-  
+
   /auth/register:
     post:
       summary: Register new user
@@ -129,7 +217,13 @@ paths:
       responses:
         '201':
           description: User created
-  
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /auth/login:
     post:
       summary: Login user
@@ -149,7 +243,13 @@ paths:
       responses:
         '200':
           description: OK (Set-Cookie sessionId)
-  
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /auth/google:
     post:
       summary: Google OAuth Login
@@ -166,17 +266,17 @@ paths:
       responses:
         '200':
           description: OK
-  
+
   /auth/logout:
     post:
-      summary: Logout
+      summary: Logout (clears sessionId cookie)
       responses:
         '200':
           description: OK
-  
+
   /auth/me:
     get:
-      summary: Get current logged in user
+      summary: Get current logged-in user
       security:
         - cookieAuth: []
       responses:
@@ -186,10 +286,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '401':
+          description: Not authenticated
+
+  # ── Projects ────────────────────────────────────────────────────────────────
 
   /projects:
     get:
-      summary: List all projects
+      summary: List all projects (admin view)
+      description: Returns all projects with owner, members, and task count.
       security:
         - cookieAuth: []
       responses:
@@ -208,6 +313,7 @@ paths:
                       $ref: '#/components/schemas/Project'
     post:
       summary: Create a new project
+      description: owner_id is always derived from the authenticated session.
       security:
         - cookieAuth: []
       requestBody:
@@ -216,15 +322,15 @@ paths:
           application/json:
             schema:
               type: object
-              required: [name, owner_id]
+              required: [name]
               properties:
                 name:
                   type: string
+                  minLength: 3
                 description:
                   type: string
-                owner_id:
+                labelColor:
                   type: string
-                  format: uuid
       responses:
         '201':
           description: Project created
@@ -237,10 +343,34 @@ paths:
                     type: boolean
                   data:
                     $ref: '#/components/schemas/Project'
+        '400':
+          description: Validation error
+
+  /projects/me:
+    get:
+      summary: List my projects
+      description: Returns only the authenticated user's non-archived projects, ordered by most recently updated.
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: User's active projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Project'
 
   /projects/{id}:
     get:
       summary: Get project details
+      description: Returns full project with tasks, members, last 5 activities, and computed progress.
       security:
         - cookieAuth: []
       parameters:
@@ -252,7 +382,7 @@ paths:
           required: true
       responses:
         '200':
-          description: Project details
+          description: Project details with progress
           content:
             application/json:
               schema:
@@ -261,9 +391,21 @@ paths:
                   success:
                     type: boolean
                   data:
-                    $ref: '#/components/schemas/Project'
+                    allOf:
+                      - $ref: '#/components/schemas/Project'
+                      - type: object
+                        properties:
+                          progress:
+                            $ref: '#/components/schemas/Progress'
+                          activities:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/ProjectActivity'
+        '404':
+          description: Project not found
     put:
       summary: Update project
+      description: Requires owner or Lead role.
       security:
         - cookieAuth: []
       parameters:
@@ -283,11 +425,21 @@ paths:
                   type: string
                 description:
                   type: string
+                labelColor:
+                  type: string
+                status:
+                  type: string
+                  enum: [ACTIVE, ARCHIVED]
       responses:
         '200':
           description: Project updated
+        '403':
+          description: Forbidden
+        '404':
+          description: Project not found
     delete:
       summary: Delete project
+      description: Only the project owner can delete a project.
       security:
         - cookieAuth: []
       parameters:
@@ -300,22 +452,47 @@ paths:
       responses:
         '200':
           description: Project deleted
+        '403':
+          description: Forbidden
 
-  /projects/user/{userId}:
-    get:
-      summary: Get projects by user
+  /projects/{id}/archive:
+    patch:
+      summary: Archive project
+      description: Sets project status to ARCHIVED and logs activity. Requires owner or Lead role.
       security:
         - cookieAuth: []
       parameters:
         - in: path
-          name: userId
+          name: id
           schema:
             type: string
             format: uuid
           required: true
       responses:
         '200':
-          description: User's projects
+          description: Project archived
+        '403':
+          description: Forbidden
+        '404':
+          description: Project not found
+
+  # ── Members ─────────────────────────────────────────────────────────────────
+
+  /projects/{id}/members:
+    get:
+      summary: List project members
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: List of members
           content:
             application/json:
               schema:
@@ -326,7 +503,156 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Project'
+                      $ref: '#/components/schemas/ProjectMember'
+    post:
+      summary: Add project member
+      description: Invite a user by email. Requires owner or Lead role.
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, role]
+              properties:
+                email:
+                  type: string
+                  format: email
+                role:
+                  type: string
+                  enum: [LEAD, MEMBER, VIEWER]
+      responses:
+        '201':
+          description: Member added
+        '403':
+          description: Forbidden
+        '404':
+          description: User not found
+
+  /projects/{id}/members/{memberId}:
+    patch:
+      summary: Update member role
+      description: Requires owner or Lead role.
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: path
+          name: memberId
+          schema:
+            type: string
+            format: uuid
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role]
+              properties:
+                role:
+                  type: string
+                  enum: [LEAD, MEMBER, VIEWER]
+      responses:
+        '200':
+          description: Role updated
+        '403':
+          description: Forbidden
+    delete:
+      summary: Remove project member
+      description: Requires owner or Lead role.
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: path
+          name: memberId
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: Member removed
+        '403':
+          description: Forbidden
+
+  # ── Activity & Progress ──────────────────────────────────────────────────────
+
+  /projects/{id}/activity:
+    get:
+      summary: Get recent project activity
+      description: Returns the last 10 activity entries for the project.
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: Activity list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectActivity'
+
+  /projects/{id}/progress:
+    get:
+      summary: Get project task progress
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: Progress summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Progress'
+
+  # ── Tasks ────────────────────────────────────────────────────────────────────
 
   /tasks:
     get:
@@ -353,7 +679,6 @@ paths:
             enum: [todo, in_progress, done]
           description: Filter by status
       responses:
-
         '200':
           description: List of tasks
           content:
@@ -382,7 +707,6 @@ paths:
                 title:
                   type: string
                   minLength: 3
-
                 description:
                   type: string
                 status:
@@ -469,7 +793,9 @@ paths:
       responses:
         '200':
           description: Task deleted
-  
+
+  # ── Users ────────────────────────────────────────────────────────────────────
+
   /users:
     get:
       summary: List all users
@@ -567,7 +893,8 @@ paths:
           name: id
           schema:
             type: string
-        required: true
+            format: uuid
+          required: true
       responses:
         '200':
           description: User deleted
