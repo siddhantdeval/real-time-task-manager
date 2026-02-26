@@ -1,10 +1,13 @@
 # API Reference
 
-> *Last updatedAt: 2026-02-23*
+> *Last updated: 2026-02-27*
 
-All endpoints are prefixed with `/api/v1`.
+All endpoints are prefixed with `/api/v1`. All protected routes require an active session cookie (`sessionId`).
+
+---
 
 ## 🏥 Health & System
+
 ### Health Check
 Check the status of the API and its dependencies (PostgreSQL, Redis).
 - **Endpoint**: `GET /health`
@@ -43,31 +46,91 @@ See [Authentication System](authentication_system.md) for deeper details.
 ---
 
 ## 📁 Projects
-### List Projects
+
+### List All Projects
+Returns all projects with owner info, members, and task count.
 - **Endpoint**: `GET /projects`
 - **Protected**: Yes
 
-### Create Project
-- **Endpoint**: `POST /projects`
+### List My Projects
+Returns only the authenticated user's non-archived projects, sorted by most recently updated.
+- **Endpoint**: `GET /projects/me`
 - **Protected**: Yes
-- **Payload**: `{ "name": "...", "description": "...", "owner_id": "uuid" }`
 
 ### Get Project Details
+Returns full project with tasks, members, last 5 activity entries, and computed progress.
 - **Endpoint**: `GET /projects/:id`
 - **Protected**: Yes
+- **Response includes**: `progress: { total, done, percentage }`
+
+### Create Project
+`owner_id` is **always** derived from the authenticated session — never from the request body.
+- **Endpoint**: `POST /projects`
+- **Protected**: Yes
+- **Payload**: `{ "name": "...", "description": "...", "labelColor": "..." }`
+- **Response**: `201 Created`
 
 ### Update Project
+Requires owner or Lead role.
 - **Endpoint**: `PUT /projects/:id`
 - **Protected**: Yes
-- **Payload**: `{ "name": "...", "description": "..." }`
+- **Payload**: `{ "name": "...", "description": "...", "labelColor": "...", "status": "ACTIVE|ARCHIVED" }`
+
+### Archive Project
+Sets project status to `ARCHIVED` and logs activity. Requires owner or Lead role.
+- **Endpoint**: `PATCH /projects/:id/archive`
+- **Protected**: Yes
 
 ### Delete Project
+Only the project owner can delete a project.
 - **Endpoint**: `DELETE /projects/:id`
 - **Protected**: Yes
 
 ---
 
+## 👥 Project Members
+
+### List Members
+- **Endpoint**: `GET /projects/:id/members`
+- **Protected**: Yes
+
+### Add Member
+Invite a user by email. Requires owner or Lead role.
+- **Endpoint**: `POST /projects/:id/members`
+- **Protected**: Yes
+- **Payload**: `{ "email": "user@example.com", "role": "LEAD|MEMBER|VIEWER" }`
+- **Response**: `201 Created`
+
+### Update Member Role
+Requires owner or Lead role.
+- **Endpoint**: `PATCH /projects/:id/members/:memberId`
+- **Protected**: Yes
+- **Payload**: `{ "role": "LEAD|MEMBER|VIEWER" }`
+
+### Remove Member
+Requires owner or Lead role.
+- **Endpoint**: `DELETE /projects/:id/members/:memberId`
+- **Protected**: Yes
+
+---
+
+## 📊 Project Activity & Progress
+
+### Recent Activity
+Returns the last 10 activity entries for a project (actor info included).
+- **Endpoint**: `GET /projects/:id/activity`
+- **Protected**: Yes
+
+### Progress
+Returns task completion stats for a project.
+- **Endpoint**: `GET /projects/:id/progress`
+- **Protected**: Yes
+- **Response**: `{ "total": 12, "done": 5, "percentage": 41 }`
+
+---
+
 ## ✅ Tasks
+
 ### List/Filter Tasks
 - **Endpoint**: `GET /tasks`
 - **Protected**: Yes
@@ -97,6 +160,7 @@ See [Authentication System](authentication_system.md) for deeper details.
 ---
 
 ## 👤 Users
+
 ### List Users
 - **Endpoint**: `GET /users`
 - **Protected**: Yes
@@ -117,3 +181,21 @@ See [Authentication System](authentication_system.md) for deeper details.
 ### Delete User
 - **Endpoint**: `DELETE /users/:id`
 - **Protected**: Yes
+
+---
+
+## ⚠️ Error Responses
+
+All errors follow a consistent shape:
+
+```json
+{ "success": false, "message": "Human-readable error message" }
+```
+
+| HTTP Code | Meaning |
+|-----------|---------|
+| `400` | Bad request / validation failure |
+| `401` | Not authenticated |
+| `403` | Forbidden (insufficient role) |
+| `404` | Resource not found |
+| `500` | Internal server error |

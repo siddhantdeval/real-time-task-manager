@@ -1,9 +1,9 @@
 # Backend Overview
 
-> *Last updatedAt: 2026-02-23*
+> *Last updated: 2026-02-27*
 
 ## 📖 Introduction
-The Backend service for the Real-time Task Manager is a high-performance, scalable Node.js application. It manages tasks, projects, and users, while providing real-time synchronization capabilities.
+The Backend service for the Real-time Task Manager is a high-performance, scalable Node.js application. It manages tasks, projects, and users — with real-time synchronisation capabilities, role-based access control (RBAC), and project activity logging.
 
 ## 🛠 Tech Stack
 - **Runtime**: [Node.js](https://nodejs.org/) (v18+)
@@ -33,11 +33,30 @@ backend/
 ```
 
 ## 🚀 Key Architectural Decisions
-1. **Controller-Service Pattern**: We use a two-tier architecture where Controllers handle HTTP concerns and Services handle business logic and direct database/cache interactions.
-2. **DTO-Based Validation**: All incoming request bodies are validated against Joi schemas defined in the `src/dto/` directory before reaching the application logic.
-3. **Session-Based Auth (Redis)**: State-of-the-art authentication using secure session cookies backed by Redis for sub-millisecond validation.
-4. **Resilient Persistence**: Prisma ORM provides type-safe access to PostgreSQL, ensuring data integrity and developer productivity.
-5. **Horizontal Scalability**: The application is stateless (sessions in Redis), allowing for easy scaling across multiple containers.
+
+1. **Controller-Service Pattern**: Controllers handle HTTP concerns; Services handle business logic and direct database/cache interactions.
+2. **DTO-Based Validation**: All incoming request bodies are validated against Joi schemas in `src/dto/` before reaching application logic.
+3. **Session-Based Auth (Redis)**: Secure session cookies backed by Redis for sub-millisecond validation.
+4. **Resilient Persistence**: Prisma ORM provides type-safe access to PostgreSQL.
+5. **Horizontal Scalability**: The application is stateless (sessions in Redis), allowing easy scaling across multiple containers.
+
+## 🔐 Security Highlights
+
+- `owner_id` is **always** sourced from the authenticated session (`req.user.id`) — never from the request body.
+- The `assertOwnerOrLead` guard is enforced on all mutating project/member operations (archive, update, add/remove members, change roles).
+- All routes under `/api/v1` (except `/health` and `/auth/*`) require a valid session cookie.
+
+## 👥 Role-Based Access Control (RBAC)
+
+| Role | Can read | Can update/archive | Can manage members |
+|------|----------|--------------------|-------------------|
+| Owner | ✅ | ✅ | ✅ |
+| LEAD | ✅ | ✅ | ✅ |
+| MEMBER | ✅ | ❌ | ❌ |
+| VIEWER | ✅ | ❌ | ❌ |
+
+## 📋 Activity Logging
+Every significant mutation (project creation, archiving, adding a member) writes a `ProjectActivity` record via the `logActivity` utility. The last 5 entries are embedded in `GET /projects/:id` and up to 10 are available via `GET /projects/:id/activity`.
 
 ## 🔗 Related Documentation
 - [API Reference](api_reference.md)

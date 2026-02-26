@@ -4,16 +4,16 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import { logger } from './utils/logger';
+import corsOptions from './utils/corsOptions';
 
 const app = express();
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 
 const morganFormat = ':method :url :status :res[content-length] - :response-time ms';
-
 app.use(
   morgan(morganFormat, {
     stream: {

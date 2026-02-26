@@ -14,4 +14,5 @@ export const environmentSchema = Joi.object({
   SESSION_TTL: Joi.number().default(86400),
   GOOGLE_CLIENT_ID: Joi.string().required(),
   GOOGLE_CLIENT_SECRET: Joi.string().required(),
+  ALLOWED_ORIGINS: Joi.string().default('http://localhost:8081,http://127.0.0.1:8081'),
 }).unknown();
