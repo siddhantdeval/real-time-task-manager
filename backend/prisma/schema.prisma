@@ -26,6 +26,20 @@ enum Priority {
   high
 }
 
+enum ProjectStatus {
+  ACTIVE
+  PLANNING
+  DRAFT
+  BLOCKED
+  ARCHIVED
+}
+
+enum MemberRole {
+  LEAD
+  MEMBER
+  VIEWER
+}
+
 model User {
   id            String    @id @default(uuid())
   name          String?
@@ -38,26 +52,61 @@ model User {
   reset_token_expires DateTime?
   created_at    DateTime  @default(now())
 
-  owned_projects Project[]
-  assigned_tasks Task[]
+  owned_projects   Project[]
+  assigned_tasks   Task[]
+  project_members  ProjectMember[]
+  project_activities ProjectActivity[]
 
   @@index([email])
   @@map("users")
 }
 
 model Project {
-  id          String   @id @default(uuid())
+  id          String        @id @default(uuid())
   name        String
   description String?
+  status      ProjectStatus @default(ACTIVE)
+  labelColor  String?       @default("#6366f1")
   owner_id    String
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
 
-  owner       User     @relation(fields: [owner_id], references: [id], onDelete: Restrict)
+  owner       User            @relation(fields: [owner_id], references: [id], onDelete: Restrict)
   tasks       Task[]
+  members     ProjectMember[]
+  activities  ProjectActivity[]
 
   @@index([name])
   @@map("projects")
+}
+
+model ProjectMember {
+  id        String     @id @default(uuid())
+  projectId String
+  userId    String
+  role      MemberRole @default(MEMBER)
+  joinedAt  DateTime   @default(now())
+
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@map("project_members")
+}
+
+model ProjectActivity {
+  id        String   @id @default(uuid())
+  projectId String
+  actorId   String
+  action    String
+  entityRef String?
+  createdAt DateTime @default(now())
+
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  actor     User     @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@map("project_activities")
 }
 
 model Task {
