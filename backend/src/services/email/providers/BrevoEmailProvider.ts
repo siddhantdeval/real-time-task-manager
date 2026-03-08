@@ -1,13 +1,14 @@
 import { IEmailProvider } from '../IEmailProvider';
 import { logger } from '../../../utils/logger';
+import { config } from '../../../config';
 
 export class BrevoEmailProvider implements IEmailProvider {
   private readonly apiKey: string;
   private readonly fromEmail: string;
 
   constructor() {
-    this.apiKey = process.env.BREVO_API_KEY || '';
-    this.fromEmail = process.env.EMAIL_FROM_ADDRESS || 'noreply@taskflow.com';
+    this.apiKey = config.email.brevoApiKey;
+    this.fromEmail = config.email.fromAddress;
 
     if (!this.apiKey) {
       logger.warn('[BrevoEmailProvider] BREVO_API_KEY is not set. Email sending will fail.');
@@ -21,7 +22,7 @@ export class BrevoEmailProvider implements IEmailProvider {
         headers: {
           'api-key': this.apiKey,
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
         body: JSON.stringify({
           sender: { email: this.fromEmail, name: 'TaskFlow' },

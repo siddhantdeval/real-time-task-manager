@@ -2,12 +2,13 @@ import { IEmailProvider } from './IEmailProvider';
 import { MockEmailProvider } from './providers/MockEmailProvider';
 import { BrevoEmailProvider } from './providers/BrevoEmailProvider';
 import { logger } from '../../utils/logger';
+import { config } from '../../config';
 
 export class EmailService {
   private provider: IEmailProvider;
 
   constructor() {
-    const providerType = process.env.EMAIL_PROVIDER || 'mock';
+    const providerType = config.email.provider;
     if (providerType === 'brevo') {
       logger.info('[EmailService] Initializing BrevoEmailProvider');
       this.provider = new BrevoEmailProvider();

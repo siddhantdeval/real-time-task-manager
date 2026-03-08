@@ -41,6 +41,13 @@ export const config = {
     clientSecret: envVars.GOOGLE_CLIENT_SECRET,
   },
   cors: {
-    allowedOrigins: envVars.ALLOWED_ORIGINS.split(',').map((origin: string) => origin.trim()),
+    allowedOrigins: envVars.ALLOWED_ORIGINS.split(',').map((origin: string) =>
+      origin.trim(),
+    ),
+  },
+  email: {
+    provider: envVars.EMAIL_PROVIDER,
+    fromAddress: envVars.EMAIL_FROM_ADDRESS,
+    brevoApiKey: envVars.BREVO_API_KEY,
   },
 };
