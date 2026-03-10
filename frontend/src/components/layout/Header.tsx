@@ -38,7 +38,7 @@ export function Header() {
         <div className="lg:flex items-center gap-9 hidden">
           <Link className="text-slate-900 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Dashboard</Link>
           <Link className="text-slate-900 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="/projects">Projects</Link>
-          <Link className="text-slate-900 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Team</Link>
+          <Link className="text-slate-900 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="/team">Team</Link>
           <Link className="text-slate-900 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Reports</Link>
         </div>
         <div className="flex gap-2">
