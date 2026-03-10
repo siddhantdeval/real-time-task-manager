@@ -8,6 +8,8 @@ export const environmentSchema = Joi.object({
     'http://localhost:8081,http://127.0.0.1:8081',
   ),
   PORT: Joi.number().default(3000),
+  FRONTEND_URL: Joi.string().uri().default('http://localhost:8081'),
+  BACKEND_URL: Joi.string().uri().default('http://localhost:3000'),
   // Database configuration
   DB_URL: Joi.string().uri().required(),
   // Redis configuration

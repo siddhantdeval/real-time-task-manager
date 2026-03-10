@@ -30,6 +30,8 @@ export const config = {
   db: {
     url: envVars.DB_URL,
   },
+  frontendUrl: envVars.FRONTEND_URL,
+  backendUrl: envVars.BACKEND_URL,
   redis: {
     url: envVars.REDIS_URL,
   },

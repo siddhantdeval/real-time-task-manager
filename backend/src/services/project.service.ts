@@ -1,6 +1,8 @@
 import { db } from './db.service';
 import { MemberRole, ProjectStatus } from '../generated/prisma';
 import { logActivity } from '../utils/logActivity';
+import { emailService } from './email/EmailService';
+import { config } from '../config';
 
 class ProjectService {
   async getAllProjects() {
@@ -137,7 +139,6 @@ class ProjectService {
   }
 
   // ── Member Management ──────────────────────────────────────────────────────
-
   async getProjectMembers(projectId: string) {
     return db.projectMember.findMany({
       where: { projectId },
@@ -147,7 +148,13 @@ class ProjectService {
 
   async addProjectMember(projectId: string, body: { email: string; role: string }, requesterId: string) {
     await this.assertOwnerOrLead(projectId, requesterId);
-    const target = await db.user.findUnique({ where: { email: body.email } });
+    
+    const [target, inviter, project] = await Promise.all([
+      db.user.findUnique({ where: { email: body.email } }),
+      db.user.findUnique({ where: { id: requesterId } }),
+      db.project.findUnique({ where: { id: projectId } }),
+    ]);
+
     if (!target) {
       const err = new Error('User not found');
       (err as any).statusCode = 404;
@@ -158,6 +165,12 @@ class ProjectService {
       include: { user: { select: { id: true, email: true, name: true, avatar_url: true } } },
     });
     await logActivity(projectId, requesterId, 'added a new member', target.email);
+
+    if (inviter && project) {
+      const inviteLink = `${config.frontendUrl}/projects/${projectId}`;
+      await emailService.sendTeamInvite(target.email, body.role, inviter.name || 'A team member', project.name, inviteLink);
+    }
+
     return member;
   }
 
