@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Project Details Modal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2513ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121022",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-slate-200 dark:bg-slate-900 font-display min-h-screen flex items-center justify-center p-4">
+<!-- Modal Overlay -->
+<div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+<!-- Modal Container -->
+<div class="bg-background-light dark:bg-background-dark w-full max-w-[640px] rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+<!-- Header Section -->
+<div class="px-8 pt-8 pb-4 flex justify-between items-start">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3">
+<h1 class="text-slate-900 dark:text-slate-100 text-3xl font-black tracking-tight">Website Redesign</h1>
+<span class="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider border border-primary/20">In Progress</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Created on Oct 24, 2023 • Marketing Team</p>
+</div>
+<button class="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-400">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto px-8 py-4 custom-scrollbar">
+<!-- Project Summary -->
+<section class="mb-8">
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">description</span>
+                        Project Summary
+                    </h2>
+<p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                        This project focuses on modernizing the website interface, improving user experience, and optimizing performance across all devices. The primary goal is to increase conversion rates by 25% through a more intuitive navigation and faster load times.
+                    </p>
+</section>
+<!-- Progress Bar Section -->
+<section class="mb-8 p-5 bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex justify-between items-end mb-3">
+<div>
+<p class="text-slate-900 dark:text-slate-100 font-bold">Overall Progress</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Based on completed tasks</p>
+</div>
+<p class="text-primary text-2xl font-black">65%</p>
+</div>
+<div class="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-500" style="width: 65%;"></div>
+</div>
+<p class="mt-3 text-sm text-slate-500 dark:text-slate-400 italic">Target completion: Dec 15, 2023</p>
+</section>
+<!-- Recent Activity Snippets -->
+<section class="mb-8">
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">history</span>
+                        Recent Activity
+                    </h2>
+<div class="space-y-4">
+<div class="flex gap-4">
+<div class="mt-1 w-2 h-2 rounded-full bg-primary flex-shrink-0"></div>
+<div class="flex-1">
+<p class="text-slate-800 dark:text-slate-200 text-sm">
+<span class="font-bold">Sarah Jenkins</span> uploaded 3 new wireframes for the checkout flow.
+                                </p>
+<p class="text-slate-400 text-xs mt-1">2 hours ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="mt-1 w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 flex-shrink-0"></div>
+<div class="flex-1">
+<p class="text-slate-800 dark:text-slate-200 text-sm">
+<span class="font-bold">David Chen</span> marked <span class="text-primary font-medium">Responsive Testing</span> as completed.
+                                </p>
+<p class="text-slate-400 text-xs mt-1">5 hours ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="mt-1 w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 flex-shrink-0"></div>
+<div class="flex-1">
+<p class="text-slate-800 dark:text-slate-200 text-sm">
+<span class="font-bold">System</span> automatically backed up project assets to cloud storage.
+                                </p>
+<p class="text-slate-400 text-xs mt-1">Yesterday at 11:45 PM</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Team Members Section -->
+<section>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold mb-4">Project Team</h2>
+<div class="flex items-center gap-2">
+<div class="flex -space-x-3 overflow-hidden">
+<img class="inline-block h-10 w-10 rounded-full ring-2 ring-background-light dark:ring-background-dark object-cover" data-alt="Female team member portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDViQGzkXyA7Vk5j5RUm2y3mulxhV86Kupsnybyt8QDl9HLH6G5gALjr5UZXRdILgnREqo-T94CVdwTuoQvh80NOVpdEw-mVprHs3TiWThCFHsJWBUWJDTpXjdm4hYEaOkZTYKgSF8ORIJbs_xoNobbGs6oJ8_g0vPiP1GGIOfPGyAe6a7SATjSJdodhpt-khUN7tg7qF5LbqtIk4o4_-mkkPhI22G95xaGgtPBfLDdMw2pUEvidGoeLhhxV3H07mhbJK33zwkow4g"/>
+<img class="inline-block h-10 w-10 rounded-full ring-2 ring-background-light dark:ring-background-dark object-cover" data-alt="Male team member portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZrhVHeY_Hr4VHlWEAyBW5C3ol9Azg_JGl6eTsv0WY9RiQyXoyiSyC4U-jb1hiv_9acot5pL9vRouhJte5pXozZeyN7qBQ47pNq1BOMPqEAKp_Fxxf2k6o5qTx-A0N1B7uk-pTBg6Vwv7Y2F9gT3o-7ZA6B5hwvRObNymqDCeNH9BSawLI55tAmsQDewF_TTu4Y7xaOuPaWoIk6tpERt8P-wYd4_jw5X085t6Ub-fJruvWEWVkaiPHIp-R6k313yomHlGgURabgTM"/>
+<img class="inline-block h-10 w-10 rounded-full ring-2 ring-background-light dark:ring-background-dark object-cover" data-alt="Male team member portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdEH1G_xyyvJxhlOvWln_gnNb9ry9eVMCfY9nwOAoIfBI43vRGWcZ3TawGuXZBhmFebhXXjki6CqoFhAyZuui8XEx39jXAuo8Bd8ZqbNj5MIjdomvVlRreGK8gpouhYDInjVKfgNpnqUSC-idOvAFOMg7TGXT_vefuxfHV58Gx_g8uSuhUdVtQJ-7ue2EECxrcoTdAROuB8ccu2IuyFi_03l-XiUxMjR5cwjuJu4L7Btd97ywPY05iTt52n-AdtfLPM2DbV5LW-CY"/>
+<img class="inline-block h-10 w-10 rounded-full ring-2 ring-background-light dark:ring-background-dark object-cover" data-alt="Male team member portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbJPN9pM3zMnFBygOqJIvxvlaAC7klvI0NTlF_52fbl09im4HdsbKcVNjjmU6-xuOuMlXaYvV1uIOLxSOzFA9eMOlYEw3Ye1r8iF49DVNY-8XsqkFCJB2Y7DO4p2zU-xIZczuVFWlCsuGIrS2Xol4sjURpgBU-dqoGjGimdRdJctt1y4fj-RDZBcu0I39GnqBUIx_6Xnnc1_A2Y4Ws96yUfFePrfp5p9LI2HinUBQkIb-4wBC0qEL9TY91XEixb0FC_wgXgH39XwU"/>
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700 ring-2 ring-background-light dark:ring-background-dark">
+<span class="text-slate-600 dark:text-slate-300 text-xs font-bold">+3</span>
+</div>
+</div>
+<button class="ml-4 flex items-center gap-1 text-primary text-sm font-bold hover:underline">
+<span class="material-symbols-outlined text-sm">add</span>
+                            Invite
+                        </button>
+</div>
+</section>
+</div>
+<!-- Footer Buttons -->
+<div class="px-8 py-6 bg-slate-50 dark:bg-slate-800/20 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3">
+<button class="px-6 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+                    Close
+                </button>
+<button class="px-6 py-2.5 bg-primary text-white rounded-lg font-bold shadow-lg shadow-primary/25 hover:opacity-90 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">edit</span>
+                    Edit Project
+                </button>
+</div>
+</div>
+</div>
+<style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+    </style>
+</body></html>

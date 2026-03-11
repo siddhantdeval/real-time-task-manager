@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Task Details Modal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2513ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121022",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        :root {
+            --checkbox-tick-svg: url('data:image/svg+xml,%3csvg viewBox=%270 0 16 16%27 fill=%27rgb(255,255,255)%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3cpath d=%27M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z%27/%3e%3c/svg%3e');
+        }
+    </style>
+</head>
+<body class="bg-slate-200/50 dark:bg-background-dark font-display">
+<!-- Modal Backdrop -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+<!-- Modal Container -->
+<div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden flex flex-col">
+<!-- Modal Header / PageHeading Component Structure -->
+<div class="p-6 border-b border-slate-100 dark:border-slate-800">
+<div class="flex flex-wrap justify-between items-start gap-4 mb-4">
+<div class="flex-1">
+<div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">
+<span class="material-symbols-outlined text-sm">folder</span>
+<span>Project Alpha / Kanban</span>
+</div>
+<h1 class="text-slate-900 dark:text-slate-100 text-3xl font-black leading-tight tracking-tight">Implement Auth Flow</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-xs font-bold uppercase tracking-wider">
+                            High Priority
+                        </span>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+<!-- Meta Info: Assignee & Due Date -->
+<div class="flex flex-wrap gap-6 mt-6">
+<div class="flex flex-col gap-1">
+<span class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase">Assignee</span>
+<div class="flex items-center gap-2">
+<img alt="Assignee Avatar" class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-800 shadow-sm" data-alt="Profile photo of the assigned user Alex" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDApte2XLos00HdYOkjSXvHEulD6E1VfvjMS1d2TC7k1jT2p3evPgEhMbr6THjEfvkbd7Krh3QK16dlLqFzVs8NI_-zwiA3t2BjRMfZkL3iDjXsLR4g0qZ12MQSYQ2PiWF2WbnLr1Apnjtmuh7KV_RPftu7g9GAVKmCCaaNrGAyPZhzTOJA3gRz89VXYhgLwAeMD9ZG2Cmfya4bdzFUYeTkggBxzKUuvAeVXxmAK0oMg_ajtmCLnbkzL8K56yJnFd6u-LwF3y9QbM4"/>
+<span class="text-slate-900 dark:text-slate-100 font-semibold text-sm">Alex Rivera</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase">Due Date</span>
+<div class="flex items-center gap-2 text-slate-900 dark:text-slate-100">
+<span class="material-symbols-outlined text-primary text-lg">calendar_today</span>
+<span class="font-semibold text-sm">Oct 24, 2023</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Content Scrollable Area -->
+<div class="flex-1 overflow-y-auto p-6 space-y-8">
+<!-- Description Section -->
+<section>
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-slate-400">notes</span>
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold">Description</h3>
+</div>
+<p class="text-slate-600 dark:text-slate-300 text-base leading-relaxed bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
+                        Implement the authentication flow using OAuth 2.0 and JWT for secure user sessions. Ensure that the refresh token mechanism is robust and handles session expiry gracefully across all microservices.
+                    </p>
+</section>
+<!-- Subtasks/Checklist Section -->
+<section>
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400">checklist</span>
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold">Subtasks</h3>
+</div>
+<span class="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">2/4 Done</span>
+</div>
+<div class="space-y-1">
+<label class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors group">
+<input checked="" class="h-5 w-5 rounded border-slate-300 dark:border-slate-600 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-primary focus:ring-offset-0 focus:outline-none transition-all" style="background-image: var(--checkbox-tick-svg)" type="checkbox"/>
+<span class="text-slate-900 dark:text-slate-100 text-base font-medium line-through opacity-60">Setup Auth0 provider</span>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors group">
+<input checked="" class="h-5 w-5 rounded border-slate-300 dark:border-slate-600 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-primary focus:ring-offset-0 focus:outline-none transition-all" style="background-image: var(--checkbox-tick-svg)" type="checkbox"/>
+<span class="text-slate-900 dark:text-slate-100 text-base font-medium line-through opacity-60">Create login form</span>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors group">
+<input class="h-5 w-5 rounded border-slate-300 dark:border-slate-600 bg-transparent text-primary focus:ring-primary focus:ring-offset-0 focus:outline-none transition-all" type="checkbox"/>
+<span class="text-slate-900 dark:text-slate-100 text-base font-medium">Integrate middleware</span>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors group">
+<input class="h-5 w-5 rounded border-slate-300 dark:border-slate-600 bg-transparent text-primary focus:ring-primary focus:ring-offset-0 focus:outline-none transition-all" type="checkbox"/>
+<span class="text-slate-900 dark:text-slate-100 text-base font-medium">Add logout functionality</span>
+</label>
+</div>
+</section>
+</div>
+<!-- Modal Footer Actions -->
+<div class="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-2">
+<button class="flex items-center justify-center gap-2 px-5 h-11 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-lg">check_circle</span>
+<span>Mark as Done</span>
+</button>
+<button class="flex items-center justify-center gap-2 px-5 h-11 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-100 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-600 transition-all">
+<span class="material-symbols-outlined text-lg">edit</span>
+<span>Edit</span>
+</button>
+</div>
+<button class="flex items-center justify-center px-5 h-11 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-sm font-bold transition-all">
+<span>Close</span>
+</button>
+</div>
+</div>
+</div>
+</body></html>

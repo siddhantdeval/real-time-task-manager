@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Edit Task Details - Task Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5348ea",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121121",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased font-display">
+<div class="relative flex min-h-screen w-full flex-col">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-3 lg:px-10">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">task_alt</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight">Task Manager</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6 ml-4">
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Dashboard</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Projects</a>
+<a class="text-primary text-sm font-bold border-b-2 border-primary pb-1" href="#">Tasks</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Team</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center gap-2 text-slate-400 text-xs font-medium mr-4">
+<span class="material-symbols-outlined text-sm">cloud_done</span>
+<span>Changes saved 2m ago</span>
+</div>
+<button class="flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-4 py-2 text-slate-700 dark:text-slate-200 text-sm font-bold hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+<span>Delete</span>
+</button>
+<button class="flex items-center gap-2 rounded-lg bg-primary px-5 py-2 text-white text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
+<span class="material-symbols-outlined text-sm">save</span>
+<span>Save Changes</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden">
+<img alt="User Profile" class="h-full w-full object-cover" data-alt="User profile avatar with friendly face" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIyKjOX3AA4DjtiCUEg3uDjun9rD5dFZnDzWFGI5st2EjJRALpDkd_M1eXtQpchL8oj1g4xSnRAoo5kee393WSexl9iOPoFJcC_MX4C8QtllHo4UJnowW4HgbVQdxswvwntORWndaAowyRwAzhhzulz5RXViAJY3TnnSuPR4tMFDUQoESS4LO0QzimZpsSzeyxMbhehPE3A9oBJ_6UAE981j17gOFKYniR-2JcuAMjWB_WkXfTD95esgq9Qfxjb4t010BfRiUo3EM"/>
+</div>
+</div>
+</header>
+<!-- Breadcrumb & Title Area -->
+<main class="mx-auto flex w-full max-w-[1440px] flex-1 flex-col px-6 py-6 lg:px-10">
+<div class="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-500">
+<a class="hover:text-primary" href="#">Projects</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<a class="hover:text-primary" href="#">Website Redesign</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="font-medium text-slate-900 dark:text-slate-100">TASK-102</span>
+</div>
+<!-- Main Grid Layout -->
+<div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+<!-- Left Column: Primary Content -->
+<div class="lg:col-span-8 flex flex-col gap-8">
+<!-- Task Heading Section -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<span class="rounded bg-primary/10 px-2 py-1 text-xs font-bold uppercase tracking-wider text-primary">High Priority</span>
+<span class="text-xs font-medium text-slate-400">ID: TASK-102</span>
+</div>
+<input class="w-full border-none bg-transparent p-0 text-4xl font-black leading-tight tracking-tight text-slate-900 focus:ring-0 dark:text-white" placeholder="Enter Task Title..." type="text" value="Finalize Homepage Hero Section"/>
+</div>
+<!-- Description / Rich Text Editor Placeholder -->
+<div class="flex flex-col gap-3">
+<label class="text-sm font-bold uppercase tracking-wider text-slate-500">Description</label>
+<div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+<div class="flex items-center gap-1 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 p-2">
+<button class="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-xl">format_bold</span></button>
+<button class="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-xl">format_italic</span></button>
+<button class="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-xl">format_list_bulleted</span></button>
+<button class="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-xl">link</span></button>
+<div class="mx-1 h-6 w-px bg-slate-200 dark:border-slate-700"></div>
+<button class="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"><span class="material-symbols-outlined text-xl">image</span></button>
+</div>
+<textarea class="w-full border-none bg-transparent p-4 text-slate-700 dark:text-slate-300 placeholder:text-slate-400 focus:ring-0" placeholder="Add a detailed description for this task..." rows="8">The homepage hero section needs a final review of the copy and assets. We should ensure the call-to-action buttons are prominent and the high-resolution background image is optimized for mobile performance.</textarea>
+</div>
+</div>
+<!-- Subtasks Section -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<label class="text-sm font-bold uppercase tracking-wider text-slate-500">Subtasks</label>
+<span class="text-xs font-medium text-slate-400">2 of 4 completed</span>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Subtask Items -->
+<div class="group flex items-center gap-3 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-3 hover:border-primary/30 transition-all">
+<input checked="" class="h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary/20 transition-all" type="checkbox"/>
+<span class="flex-1 text-slate-400 line-through decoration-slate-400 decoration-1">Review copy with the marketing team</span>
+<button class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-all"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+<div class="group flex items-center gap-3 rounded-lg border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-3 hover:border-primary/30 transition-all">
+<input checked="" class="h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary/20 transition-all" type="checkbox"/>
+<span class="flex-1 text-slate-400 line-through decoration-slate-400 decoration-1">Select high-res hero background image</span>
+<button class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-all"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+<div class="group flex items-center gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-3 hover:border-primary/30 transition-all">
+<input class="h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary/20 transition-all" type="checkbox"/>
+<span class="flex-1 text-slate-700 dark:text-slate-200">Test CTA button interactions</span>
+<button class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-all"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+<div class="group flex items-center gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-3 hover:border-primary/30 transition-all">
+<input class="h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary/20 transition-all" type="checkbox"/>
+<span class="flex-1 text-slate-700 dark:text-slate-200">Optimize assets for web delivery</span>
+<button class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-all"><span class="material-symbols-outlined text-lg">delete</span></button>
+</div>
+<!-- Add Subtask Input -->
+<button class="flex items-center gap-2 rounded-lg border-2 border-dashed border-slate-200 dark:border-slate-800 p-3 text-slate-500 hover:border-primary/50 hover:text-primary transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="text-sm font-medium">Add a new subtask...</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Right Column: Sidebar Metadata & History -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Status & Priority Card -->
+<div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6 shadow-sm">
+<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-500">Status</label>
+<div class="relative">
+<select class="w-full appearance-none rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 py-2.5 pl-3 pr-10 text-sm font-medium focus:border-primary focus:ring-primary/20 dark:text-white transition-all">
+<option>To Do</option>
+<option selected="">In Progress</option>
+<option>Under Review</option>
+<option>Done</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+<span class="material-symbols-outlined text-lg">unfold_more</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-500">Priority</label>
+<div class="relative">
+<select class="w-full appearance-none rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 py-2.5 pl-3 pr-10 text-sm font-medium focus:border-primary focus:ring-primary/20 dark:text-white transition-all">
+<option>Low</option>
+<option>Medium</option>
+<option selected="">High</option>
+<option>Critical</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+<span class="material-symbols-outlined text-lg">unfold_more</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-500">Deadline</label>
+<div class="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 p-3 text-sm font-medium text-slate-700 dark:text-slate-200 hover:border-primary transition-all cursor-pointer">
+<span class="material-symbols-outlined text-primary text-xl">calendar_today</span>
+<span>Oct 24, 2023 at 5:00 PM</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold uppercase tracking-wider text-slate-500">Assigned To</label>
+<div class="flex items-center gap-3">
+<div class="flex -space-x-2">
+<img alt="Sarah" class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900" data-alt="Avatar for project manager Sarah" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLwmWdbVkaDMr7lLFGyhp3-7paSmdbxoQrpAXCkU4vszmtu_YNN4w7BbAdzUqkt9ttz76b_dKgoT0PmgUJ6TdsqBzpKYCH4_uBWyjFHAAb1zIonjchQ5E5T8y5zxxiC_yEM6RTq2S-IkFLcYtuol5nPAAaRv61L1sxnr86GG5Z1Ev-wyQ9FaLerPaq50uI0z02bumbit-WIUNXQB0eJk61eJeQ-OiwSIgoT6s1U3m8CE5f_s3azW1KrMRXxK8nz2fO8tunm4sDsnM"/>
+<img alt="Mike" class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-slate-900" data-alt="Avatar for developer Mike" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCR6XzxwdaFMM0jdctaat7Ei8pHG-dA61G6A2FyVb01OfwzNone1G-mFmC-bBZcb3Uf1VkumMRkLCCm-LPFJiQrp_-u5KXKqL5iUHT5R1DpFi8VPOa5bt1KSsS8JojKfFBFBV7zH_SlmJqoiK3Uw0wN8dF7CHwDZrmz3H-QolrY-lcq--ZUjzSoTyvRKZWZXAG6N6Rx2YBw6REaUuOHXtc9p1LIT77lbaOnUg8AqAf_uahdNw2kuICP9Yv3m1Mil2R2wNdsFmGKIR0"/>
+<div class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-bold ring-2 ring-white dark:ring-slate-900">+1</div>
+</div>
+<button class="h-8 w-8 rounded-full border border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary transition-all">
+<span class="material-symbols-outlined text-lg">person_add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Activity History Card -->
+<div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6 shadow-sm overflow-hidden flex flex-col h-full max-h-[500px]">
+<label class="mb-4 text-sm font-bold uppercase tracking-wider text-slate-500">Activity History</label>
+<div class="flex flex-col gap-5 overflow-y-auto pr-2 custom-scrollbar">
+<!-- Activity Item 1 -->
+<div class="flex gap-4">
+<div class="relative mt-1">
+<div class="z-10 flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary ring-4 ring-white dark:ring-slate-900">
+<span class="material-symbols-outlined text-sm">edit_note</span>
+</div>
+<div class="absolute bottom-[-20px] left-1/2 h-full w-0.5 -translate-x-1/2 bg-slate-100 dark:bg-slate-800"></div>
+</div>
+<div class="flex flex-col gap-0.5">
+<p class="text-sm font-medium text-slate-800 dark:text-slate-200">You updated the description</p>
+<p class="text-xs text-slate-400">2 minutes ago</p>
+</div>
+</div>
+<!-- Activity Item 2 -->
+<div class="flex gap-4">
+<div class="relative mt-1">
+<div class="z-10 flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 ring-4 ring-white dark:ring-slate-900">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+</div>
+<div class="absolute bottom-[-20px] left-1/2 h-full w-0.5 -translate-x-1/2 bg-slate-100 dark:bg-slate-800"></div>
+</div>
+<div class="flex flex-col gap-0.5">
+<p class="text-sm font-medium text-slate-800 dark:text-slate-200">Sarah completed subtask: Review copy</p>
+<p class="text-xs text-slate-400">1 hour ago</p>
+</div>
+</div>
+<!-- Activity Item 3 -->
+<div class="flex gap-4">
+<div class="relative mt-1">
+<div class="z-10 flex h-7 w-7 items-center justify-center rounded-full bg-amber-100 text-amber-600 ring-4 ring-white dark:ring-slate-900">
+<span class="material-symbols-outlined text-sm">swap_horiz</span>
+</div>
+<div class="absolute bottom-[-20px] left-1/2 h-full w-0.5 -translate-x-1/2 bg-slate-100 dark:bg-slate-800"></div>
+</div>
+<div class="flex flex-col gap-0.5">
+<p class="text-sm font-medium text-slate-800 dark:text-slate-200">Status changed from 'To Do' to 'In Progress'</p>
+<p class="text-xs text-slate-400">Yesterday at 3:45 PM</p>
+</div>
+</div>
+<!-- Activity Item 4 -->
+<div class="flex gap-4">
+<div class="relative mt-1">
+<div class="z-10 flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-500 ring-4 ring-white dark:ring-slate-900">
+<span class="material-symbols-outlined text-sm">add_circle</span>
+</div>
+</div>
+<div class="flex flex-col gap-0.5">
+<p class="text-sm font-medium text-slate-800 dark:text-slate-200">Task created by Sarah Jenkins</p>
+<p class="text-xs text-slate-400">Oct 20, 2023</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<style>
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
+    </style>
+</body></html>
