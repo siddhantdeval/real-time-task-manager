@@ -14,6 +14,7 @@ export const environmentSchema = Joi.object({
   DB_URL: Joi.string().uri().required(),
   // Redis configuration
   REDIS_URL: Joi.string().uri().required(),
+  REDIS_TASK_TTL: Joi.number().default(300), // in seconds
   // Logging configuration
   LOG_LEVEL: Joi.string()
     .valid('error', 'warn', 'info', 'http', 'verbose', 'debug', 'silly')

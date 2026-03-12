@@ -34,6 +34,7 @@ export const config = {
   backendUrl: envVars.BACKEND_URL,
   redis: {
     url: envVars.REDIS_URL,
+    taskTTL: envVars.REDIS_TASK_TTL || 300,
   },
   logLevel: envVars.LOG_LEVEL,
   sessionTTL: envVars.SESSION_TTL || 86400, // Idle timeout: Default to 24 hours

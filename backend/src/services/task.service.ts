@@ -1,12 +1,14 @@
 import { db } from './db.service';
 import { Status, Priority } from '../generated/prisma';
+import { redisService } from './redis.service';
+import { logger } from '../utils/logger';
+import { config } from '../config';
 
 export interface TaskFilter {
   project_id?: string;
   assignee_id?: string;
   status?: Status;
 }
-
 class TaskService {
   async getAllTasks(filter: TaskFilter) {
     return db.task.findMany({
@@ -20,6 +22,23 @@ class TaskService {
   }
 
   async getTaskById(id: string) {
+    const cacheKey = `task:${id}`;
+
+    try {
+      const client = redisService.getClient();
+      const cachedTask = await client.get(cacheKey);
+      if (cachedTask) {
+        try {
+          const parsed = JSON.parse(cachedTask);
+          return parsed;
+        } catch (parseError) {
+          logger.warn(`Malformed JSON in cache for key ${cacheKey}`);
+        }
+      }
+    } catch (redisError) {
+      logger.error(`Redis GET error for key ${cacheKey}:`, redisError);
+    }
+
     const task = await db.task.findUnique({
       where: { id },
       include: {
@@ -33,18 +52,33 @@ class TaskService {
       (error as any).statusCode = 404;
       throw error;
     }
+
+    // Set Redis Cache Asynchronously
+    (async () => {
+      try {
+        const client = redisService.getClient();
+        const ttl = config.redis.taskTTL ? parseInt(config.redis.taskTTL, 10) : 300;
+        await client.setex(cacheKey, ttl, JSON.stringify(task));
+      } catch (redisError) {
+        logger.error(`Redis SETEX error for key ${cacheKey}:`, redisError);
+      }
+    })();
+
     return task;
   }
 
-  async createTask(data: {
-    title: string;
-    description?: string | null;
-    status?: Status;
-    priority?: Priority;
-    due_date?: string | Date | null;
-    project_id: string;
-    assignee_id?: string | null;
-  }, userId?: string) {
+  async createTask(
+    data: {
+      title: string;
+      description?: string | null;
+      status?: Status;
+      priority?: Priority;
+      due_date?: string | Date | null;
+      project_id: string;
+      assignee_id?: string | null;
+    },
+    userId?: string,
+  ) {
     // If userId is provided, verify project ownership
     if (userId) {
       const project = await db.project.findUnique({ where: { id: data.project_id } });
