@@ -59,6 +59,10 @@ The database schema is defined in `prisma/schema.prisma`.
   }
   ```
 
+### Pagination & Counting
+- **Performance**: Use `skip` and `take` in Prisma `findMany` queries to implement offset-based pagination. This prevents loading large datasets into memory and improves response times for list endpoints.
+- **Counting**: Use `prisma.model.count()` (e.g., `db.task.count()`) to efficiently count records without retrieving them. This is essential for building paginated UI components that need to know total pages.
+
 ### Data Access Architectural Decision
 **Context**: Initially considered a Repository pattern but pivoted to a **Service-Direct-to-Client** approach.
 **Decision**: Interactions with PostgreSQL are handled directly within services using the `db` (Prisma) client.

@@ -48,6 +48,8 @@ Graceful Shutdown
 
 ### Caching
 - **Pattern**: Cache-aside. Check Redis for data before querying the database.
+- **Invalidation**: Invalidate-on-write. Delete the cached key (`DEL`) immediately after a successful database update or delete operation to ensure data consistency.
+- **Error Handling**: Non-blocking invalidation. If the Redis `DEL` operation fails during an update, log a warning instead of failing the primary database transaction. The TTL guarantees eventual consistency.
 - **TTL**: Always set a Time-To-Live (TTL) for cached keys to prevent stale data accumulation.
 
 ### Pub/Sub
