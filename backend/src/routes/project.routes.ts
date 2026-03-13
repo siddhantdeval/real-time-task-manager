@@ -15,10 +15,12 @@ import {
   getProjectActivity,
   getProjectProgress,
 } from '../controllers/project.controller';
+import { getTasksByProject } from '../controllers/task.controller';
 import {
   validate,
   createProjectSchema,
   updateProjectSchema,
+  getProjectTasksSchema,
 } from '../middleware/validation';
 import { authenticate } from '../middleware/auth.middleware';
 import { inviteMemberSchema, updateMemberRoleSchema } from '../dto/project.dto';
@@ -35,6 +37,13 @@ router.post('/', validate(createProjectSchema), createProject);
 router.put('/:id', validate(updateProjectSchema), updateProject);
 router.patch('/:id/archive', archiveProject);
 router.delete('/:id', deleteProject);
+
+// Tasks within project
+// Use a generic request validator middleware here since validate() targets req.body.
+// To validate req.params/query we might need a custom approach or adapt validate()
+// Wait, looking at validate definition it validates req.body. I will need to validate query/params natively in controller or modify the middleware.
+// Let's use validation inside controller or just rely on controller parsing since validate only checks req.body
+router.get('/:id/tasks', getTasksByProject);
 
 // Legacy
 router.get('/user/:userId', getProjectsByUser);

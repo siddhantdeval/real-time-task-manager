@@ -21,6 +21,24 @@ class TaskService {
     });
   }
 
+  async getTasksByProject(projectId: string, skip: number, take: number) {
+    return db.task.findMany({
+      where: { project_id: projectId },
+      skip,
+      take,
+      include: {
+        assignee: { select: { id: true, name: true, email: true, avatar_url: true } },
+      },
+      orderBy: { created_at: 'desc' },
+    });
+  }
+
+  async countTasksByProject(projectId: string): Promise<number> {
+    return db.task.count({
+      where: { project_id: projectId },
+    });
+  }
+
   async getTaskById(id: string) {
     const cacheKey = `task:${id}`;
 

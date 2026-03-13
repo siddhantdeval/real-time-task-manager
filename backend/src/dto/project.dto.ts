@@ -25,3 +25,9 @@ export const inviteMemberSchema = Joi.object({
 export const updateMemberRoleSchema = Joi.object({
   role: Joi.string().valid('LEAD', 'MEMBER', 'VIEWER').required(),
 });
+
+export const getProjectTasksSchema = Joi.object({
+  projectId: Joi.string().uuid().required(),
+  page: Joi.number().integer().min(1).default(1),
+  limit: Joi.number().integer().min(1).max(100).default(20),
+});

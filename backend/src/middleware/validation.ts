@@ -19,7 +19,8 @@ export {
 
 export { 
   createProjectSchema, 
-  updateProjectSchema 
+  updateProjectSchema,
+  getProjectTasksSchema
 } from '../dto/project.dto';
 
 export { 
