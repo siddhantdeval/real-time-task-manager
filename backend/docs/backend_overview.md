@@ -38,7 +38,8 @@ backend/
 2. **DTO-Based Validation**: All incoming request bodies are validated against Joi schemas in `src/dto/` before reaching application logic.
 3. **Session-Based Auth (Redis)**: Secure session cookies backed by Redis for sub-millisecond validation.
 4. **Resilient Persistence**: Prisma ORM provides type-safe access to PostgreSQL.
-5. **Horizontal Scalability**: The application is stateless (sessions in Redis), allowing easy scaling across multiple containers.
+5. **Data Caching**: High-read endpoints (like fetching task details) use a cache-aside pattern with Redis for low-latency responses, combined with an invalidate-on-write strategy to ensure data consistency.
+6. **Horizontal Scalability**: The application is stateless (sessions and cache in Redis), allowing easy scaling across multiple containers.
 
 ## 🔐 Security Highlights
 

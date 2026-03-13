@@ -116,3 +116,17 @@ graph LR
     Redis -->|3. Broadcast| SSE[SSE / Socket Service]
     SSE -->|4. Push| UI[Next.js Frontend]
 ```
+
+---
+
+## 5. Data Caching Flow
+To reduce latency for frequently accessed resources, specifically tasks, the backend leverages Redis.
+
+1. **Read Operations (Cache-Aside Pattern)**:
+   - When fetching a task, the service first queries Redis.
+   - **Cache HIT**: The task is parsed and returned immediately, skipping the database.
+   - **Cache MISS**: The service fetches the task from the database, returns it to the client, and asynchronously writes it to Redis `SETEX` with a Time-to-Live (TTL).
+2. **Write Operations (Invalidate-on-Write Pattern)**:
+   - When a task is updated or deleted, the service performs the database transaction.
+   - On success, it executes a `DEL` command in Redis for the corresponding task key, invalidating the cached version. Next time the data is accessed, a cache MISS will occur, fetching the fresh data.
+   - If cache invalidation fails, the service logs a warning without breaking the update flow.

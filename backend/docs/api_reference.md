@@ -142,6 +142,7 @@ Returns task completion stats for a project.
 ### Get Task
 - **Endpoint**: `GET /tasks/:id`
 - **Protected**: Yes
+- **Note**: Utilizes Redis caching (cache-aside) to improve read performance.
 
 ### Create Task
 - **Endpoint**: `POST /tasks`
