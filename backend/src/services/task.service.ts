@@ -117,10 +117,20 @@ class TaskService {
     }
 
     try {
-      return await db.task.update({
+      const updatedTask = await db.task.update({
         where: { id },
         data: updateData,
       });
+
+      // Cache invalidation
+      try {
+        const client = redisService.getClient();
+        await client.del(`task:${id}`);
+      } catch (redisError) {
+        logger.warn(`Cache Invalidation failed for key task:${id}:`, redisError);
+      }
+
+      return updatedTask;
     } catch (error: any) {
       if (error.code === 'P2025') {
         const err = new Error('Task not found');
@@ -141,6 +151,15 @@ class TaskService {
       await db.task.delete({
         where: { id },
       });
+
+      // Cache invalidation
+      try {
+        const client = redisService.getClient();
+        await client.del(`task:${id}`);
+      } catch (redisError) {
+        logger.warn(`Cache Invalidation failed for key task:${id}:`, redisError);
+      }
+
       return { success: true, message: 'Task deleted successfully' };
     } catch (error: any) {
       if (error.code === 'P2025') {

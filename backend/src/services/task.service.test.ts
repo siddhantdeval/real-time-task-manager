@@ -191,6 +191,15 @@ describe('TaskService Unit Tests', () => {
   });
 
   describe('updateTask', () => {
+    let mockRedisDel: jest.Mock;
+
+    beforeEach(() => {
+      mockRedisDel = jest.fn().mockResolvedValue(1);
+      (redisService.getClient as jest.Mock).mockReturnValue({
+        del: mockRedisDel,
+      });
+    });
+
     it('should update a task successfully', async () => {
       const updateData = { title: 'Updated' };
       (db.task.update as jest.Mock).mockResolvedValue({ ...mockTask, title: 'Updated' });
@@ -201,6 +210,21 @@ describe('TaskService Unit Tests', () => {
         where: { id: 'task-1' },
         data: updateData,
       });
+      expect(mockRedisDel).toHaveBeenCalledWith('task:task-1');
+      expect(result.title).toBe('Updated');
+    });
+
+    it('should log warning if cache invalidation fails during update', async () => {
+      const updateData = { title: 'Updated' };
+      (db.task.update as jest.Mock).mockResolvedValue({ ...mockTask, title: 'Updated' });
+      mockRedisDel.mockRejectedValue(new Error('Redis error'));
+
+      const result = await taskService.updateTask('task-1', updateData);
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('Cache Invalidation failed for key task:task-1'),
+        expect.any(Error)
+      );
       expect(result.title).toBe('Updated');
     });
 
@@ -214,12 +238,35 @@ describe('TaskService Unit Tests', () => {
   });
 
   describe('deleteTask', () => {
+    let mockRedisDel: jest.Mock;
+
+    beforeEach(() => {
+      mockRedisDel = jest.fn().mockResolvedValue(1);
+      (redisService.getClient as jest.Mock).mockReturnValue({
+        del: mockRedisDel,
+      });
+    });
+
     it('should delete a task successfully', async () => {
       (db.task.delete as jest.Mock).mockResolvedValue(mockTask);
 
       const result = await taskService.deleteTask('task-1');
 
       expect(db.task.delete).toHaveBeenCalledWith({ where: { id: 'task-1' } });
+      expect(mockRedisDel).toHaveBeenCalledWith('task:task-1');
+      expect(result.success).toBe(true);
+    });
+
+    it('should log warning if cache invalidation fails during delete', async () => {
+      (db.task.delete as jest.Mock).mockResolvedValue(mockTask);
+      mockRedisDel.mockRejectedValue(new Error('Redis error'));
+
+      const result = await taskService.deleteTask('task-1');
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('Cache Invalidation failed for key task:task-1'),
+        expect.any(Error)
+      );
       expect(result.success).toBe(true);
     });
 
