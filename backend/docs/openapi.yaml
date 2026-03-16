@@ -1,9 +1,9 @@
-# Last updated: 2026-02-27
+# Last updated: 2026-03-16
 openapi: 3.0.3
 info:
   title: Real-Time Task Manager API
-  description: "API for managing projects, tasks, and users in real-time. (Last updated: 2026-02-27)"
-  version: 1.1.0
+  description: "API for managing projects, tasks, and users in real-time. (Last updated: 2026-03-16)"
+  version: 1.2.0
 servers:
   - url: http://localhost:8080/api/v1
     description: Local Development Server
@@ -171,6 +171,30 @@ components:
           type: string
           nullable: true
 
+    Pagination:
+      type: object
+      properties:
+        total:
+          type: integer
+        totalPages:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    PaginatedTasksResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+        meta:
+          $ref: '#/components/schemas/Pagination'
+
     ErrorResponse:
       type: object
       properties:
@@ -288,6 +312,50 @@ paths:
                 $ref: '#/components/schemas/User'
         '401':
           description: Not authenticated
+
+  /auth/forgot-password:
+    post:
+      summary: Forgot password
+      description: Sends a password reset email if the user exists.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: OK (Success message even if email not found for privacy)
+        '400':
+          description: Validation error
+
+  /auth/reset-password:
+    post:
+      summary: Reset password
+      description: Resets password using a token from the forgot-password email.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, password]
+              properties:
+                token:
+                  type: string
+                password:
+                  type: string
+                  minLength: 6
+      responses:
+        '200':
+          description: Password reset successful
+        '400':
+          description: Invalid token or password format
 
   # ── Projects ────────────────────────────────────────────────────────────────
 
@@ -475,6 +543,70 @@ paths:
           description: Forbidden
         '404':
           description: Project not found
+
+  /projects/{id}/tasks:
+    get:
+      summary: List tasks for a project
+      description: Returns a paginated list of tasks associated with the project.
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+          description: Items per page
+      responses:
+        '200':
+          description: Paginated tasks list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTasksResponse'
+        '400':
+          description: Invalid parameters
+        '404':
+          description: Project not found
+
+  /projects/user/{userId}:
+    get:
+      summary: List projects for a specific user (legacy)
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Project'
 
   # ── Members ─────────────────────────────────────────────────────────────────
 
