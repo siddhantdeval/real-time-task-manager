@@ -1,17 +1,17 @@
-import { taskService } from './task.service';
-import { db } from './db.service';
-import { redisService } from './redis.service';
+import { taskService } from '../services/task.service';
+import { db } from '../services/db.service';
+import { redisService } from '../services/redis.service';
 import { logger } from '../utils/logger';
 
 // Mock Dependencies
-jest.mock('./redis.service', () => ({
+jest.mock('../services/redis.service', () => ({
   redisService: {
     healthCheck: jest.fn(),
     getClient: jest.fn(),
   },
 }));
 
-jest.mock('./db.service', () => ({
+jest.mock('../services/db.service', () => ({
   db: {
     task: {
       findMany: jest.fn(),

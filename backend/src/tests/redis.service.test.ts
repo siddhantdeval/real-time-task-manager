@@ -1,4 +1,4 @@
-import { redisService } from './redis.service';
+import { redisService } from '../services/redis.service';
 
 // Mock config module to point to the test Redis instance
 jest.mock('../config', () => ({
