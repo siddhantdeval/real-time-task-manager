@@ -43,6 +43,16 @@ See [Authentication System](authentication_system.md) for deeper details.
 - **Protected**: Yes
 - **Response**: `{ "user": { ... } }`
 
+### Forgot Password
+- **Endpoint**: `POST /auth/forgot-password`
+- **Payload**: `{ "email": "..." }`
+- **Response**: `200 OK`
+
+### Reset Password
+- **Endpoint**: `POST /auth/reset-password`
+- **Payload**: `{ "token": "...", "password": "..." }`
+- **Response**: `200 OK`
+
 ---
 
 ## 📁 Projects
@@ -94,6 +104,10 @@ Returns a paginated list of tasks associated with a project.
   - `page`: Page number (default: 1)
   - `limit`: Items per page (default: 20)
 - **Response**: Paginated list with `meta` object (total, totalPages, page, limit).
+
+### List Projects by User (Legacy)
+- **Endpoint**: `GET /projects/user/:userId`
+- **Protected**: Yes
 
 ---
 

@@ -238,9 +238,21 @@ paths:
                 password:
                   type: string
                   minLength: 6
+                name:
+                  type: string
+                  nullable: true
       responses:
         '201':
           description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
         '400':
           description: Validation error
           content:
@@ -267,6 +279,15 @@ paths:
       responses:
         '200':
           description: OK (Set-Cookie sessionId)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
         '401':
           description: Invalid credentials
           content:
@@ -520,6 +541,10 @@ paths:
       responses:
         '200':
           description: Project deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' # ErrorResponse has success and message which matches success response too
         '403':
           description: Forbidden
 
@@ -925,6 +950,10 @@ paths:
       responses:
         '200':
           description: Task deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # ── Users ────────────────────────────────────────────────────────────────────
 
@@ -968,9 +997,21 @@ paths:
                 role:
                   type: string
                   enum: [admin, member]
+                name:
+                  type: string
+                  nullable: true
       responses:
         '201':
           description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/User'
 
   /users/{id}:
     get:
@@ -1030,3 +1071,7 @@ paths:
       responses:
         '200':
           description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
