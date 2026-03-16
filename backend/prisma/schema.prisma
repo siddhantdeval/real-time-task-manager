@@ -124,6 +124,7 @@ model Task {
   project     Project  @relation(fields: [project_id], references: [id], onDelete: Cascade)
   assignee    User?    @relation(fields: [assignee_id], references: [id], onDelete: SetNull)
 
+  @@index([project_id])
   @@index([title])
   @@map("tasks")
 }

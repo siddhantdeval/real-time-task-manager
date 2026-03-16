@@ -1,6 +1,6 @@
 # API Reference
 
-> *Last updated: 2026-02-27*
+> *Last updated: 2026-03-16*
 
 All endpoints are prefixed with `/api/v1`. All protected routes require an active session cookie (`sessionId`).
 
@@ -85,6 +85,15 @@ Sets project status to `ARCHIVED` and logs activity. Requires owner or Lead role
 Only the project owner can delete a project.
 - **Endpoint**: `DELETE /projects/:id`
 - **Protected**: Yes
+
+### List Project Tasks
+Returns a paginated list of tasks associated with a project.
+- **Endpoint**: `GET /projects/:id/tasks`
+- **Protected**: Yes
+- **Query Params**:
+  - `page`: Page number (default: 1)
+  - `limit`: Items per page (default: 20)
+- **Response**: Paginated list with `meta` object (total, totalPages, page, limit).
 
 ---
 

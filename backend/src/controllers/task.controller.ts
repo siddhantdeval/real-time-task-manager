@@ -21,6 +21,27 @@ export const getTaskById = asyncHandler(async (req: Request, res: Response) => {
   res.json({ success: true, data: task });
 });
 
+export const getTasksByProject = asyncHandler(async (req: Request, res: Response) => {
+  const { projectId, page, limit } = res.locals.pagination;
+
+  const skip = (page - 1) * limit;
+  const take = limit;
+
+  const tasks = await taskService.getTasksByProject(projectId, skip, take);
+  const totalTasks = await taskService.countTasksByProject(projectId);
+
+  res.json({
+    success: true,
+    data: tasks,
+    meta: {
+      page,
+      limit,
+      total: totalTasks,
+      totalPages: Math.ceil(totalTasks / limit),
+    },
+  });
+});
+
 export const createTask = asyncHandler(async (req: Request, res: Response) => {
   const task = await taskService.createTask(req.body, req.user?.id);
   res.status(201).json({ success: true, data: task });

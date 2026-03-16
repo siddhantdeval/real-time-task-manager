@@ -15,10 +15,13 @@ import {
   getProjectActivity,
   getProjectProgress,
 } from '../controllers/project.controller';
+import { getTasksByProject } from '../controllers/task.controller';
 import {
   validate,
   createProjectSchema,
   updateProjectSchema,
+  getProjectTasksSchema,
+  validateGetProjectTasks,
 } from '../middleware/validation';
 import { authenticate } from '../middleware/auth.middleware';
 import { inviteMemberSchema, updateMemberRoleSchema } from '../dto/project.dto';
@@ -35,6 +38,9 @@ router.post('/', validate(createProjectSchema), createProject);
 router.put('/:id', validate(updateProjectSchema), updateProject);
 router.patch('/:id/archive', archiveProject);
 router.delete('/:id', deleteProject);
+
+// Tasks within project
+router.get('/:id/tasks', validateGetProjectTasks, getTasksByProject);
 
 // Legacy
 router.get('/user/:userId', getProjectsByUser);

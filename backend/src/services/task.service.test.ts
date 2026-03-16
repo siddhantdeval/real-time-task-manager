@@ -75,6 +75,39 @@ describe('TaskService Unit Tests', () => {
     });
   });
 
+  describe('getTasksByProject', () => {
+    it('should return paginated tasks for a specific project', async () => {
+      const tasks = [mockTask];
+      (db.task.findMany as jest.Mock).mockResolvedValue(tasks);
+
+      const result = await taskService.getTasksByProject('project-1', 10, 5);
+
+      expect(db.task.findMany).toHaveBeenCalledWith({
+        where: { project_id: 'project-1' },
+        skip: 10,
+        take: 5,
+        include: {
+          assignee: { select: { id: true, name: true, email: true, avatar_url: true } },
+        },
+        orderBy: { created_at: 'desc' },
+      });
+      expect(result).toEqual(tasks);
+    });
+  });
+
+  describe('countTasksByProject', () => {
+    it('should return the total count of tasks for a project', async () => {
+      (db.task.count as jest.Mock).mockResolvedValue(42);
+
+      const result = await taskService.countTasksByProject('project-1');
+
+      expect(db.task.count).toHaveBeenCalledWith({
+        where: { project_id: 'project-1' },
+      });
+      expect(result).toBe(42);
+    });
+  });
+
   describe('getTaskById', () => {
     let mockRedisGet: jest.Mock;
     let mockRedisSetex: jest.Mock;

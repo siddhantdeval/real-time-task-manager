@@ -1,6 +1,6 @@
 # System Data Flow
 
-> *Last updated: 2026-02-27*
+> *Last updated: 2026-03-16*
 
 This document details how information travels through the Real-Time Task Manager backend.
 
@@ -54,10 +54,10 @@ graph TD
 
 ---
 
-## 2. Validation Flow
-Validation occurs in two stages to ensure data integrity:
-1. **Schema Validation (Joi DTOs)**: Middleware rejects malformed requests before they reach the controller.
-2. **RBAC Business Validation**: `assertOwnerOrLead` in the Service layer checks that the authenticated user is the project owner or holds the `LEAD` role before any write operation is executed.
+Validation occurs in three stages to ensure data integrity and security:
+1.  **Schema Validation (Joi DTOs)**: Middleware validates incoming request data (body, params, query) against Joi schemas.
+2.  **Internal Data Handoff**: Validated and type-cast data is passed from the middleware to the controller via `res.locals.pagination` (or other context-specific keys), preventing issues with mutating `req.query` or `req.params`.
+3.  **RBAC Business Validation**: `assertOwnerOrLead` in the Service layer checks that the authenticated user is the project owner or holds the `LEAD` role before any write operation is executed.
 
 ```mermaid
 sequenceDiagram
@@ -99,6 +99,7 @@ sequenceDiagram
 | `POST /projects` | `createProject` | `createProject(data)` | `owner_id` from session; runs in Prisma `$transaction`; creates `ProjectMember` (LEAD) + activity log |
 | `PATCH /projects/:id/archive` | `archiveProject` | `archiveProject(id, userId)` | RBAC guarded; logs activity |
 | `POST /projects/:id/members` | `addProjectMember` | `addProjectMember(...)` | RBAC guarded; looks up user by email; logs activity |
+| `GET /projects/:id/tasks` | `getTasksByProject` | `getTasksByProject(...)` | Paginated tasks retrieval; uses `res.locals` for validated input |
 
 ---
 
