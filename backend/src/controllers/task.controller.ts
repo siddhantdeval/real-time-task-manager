@@ -27,8 +27,10 @@ export const getTasksByProject = asyncHandler(async (req: Request, res: Response
   const skip = (page - 1) * limit;
   const take = limit;
 
-  const tasks = await taskService.getTasksByProject(projectId, skip, take);
-  const totalTasks = await taskService.countTasksByProject(projectId);
+  const tasksPromise = taskService.getTasksByProject(projectId, skip, take);
+  const totalTasksPromise = taskService.countTasksByProject(projectId);
+
+  const [tasks, totalTasks] = await Promise.all([tasksPromise, totalTasksPromise]);
 
   res.json({
     success: true,
@@ -58,4 +60,3 @@ export const deleteTask = asyncHandler(async (req: Request, res: Response) => {
   const result = await taskService.deleteTask(id as string);
   res.json(result);
 });
-

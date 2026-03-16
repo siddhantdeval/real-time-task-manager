@@ -19,6 +19,7 @@ jest.mock('./db.service', () => ({
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
     },
     project: {
       findUnique: jest.fn(),

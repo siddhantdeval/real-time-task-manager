@@ -2,6 +2,7 @@ import request from 'supertest';
 import app from '../app';
 import { db } from '../services/db.service';
 import { redisService } from '../services/redis.service';
+import { sessionService } from '../services/session.service';
 import bcrypt from 'bcrypt';
 
 const MOCK_PASSWORD = 'password123';
@@ -13,6 +14,7 @@ describe('Task API Integration Tests - getTasksByProject', () => {
   let sessionToken: string;
 
   beforeAll(async () => {
+    await redisService.connect();
     await db.task.deleteMany();
     await db.projectActivity.deleteMany();
     await db.projectMember.deleteMany();
@@ -28,9 +30,7 @@ describe('Task API Integration Tests - getTasksByProject', () => {
       },
     });
 
-    sessionToken = `test-session-${user.id}`;
-    const redisClient = redisService.getClient();
-    await redisClient.set(`session:${sessionToken}`, user.id, 'EX', 3600);
+    sessionToken = await sessionService.createSession(user.id);
 
     project = await db.project.create({
       data: {
@@ -48,8 +48,10 @@ describe('Task API Integration Tests - getTasksByProject', () => {
     await db.project.deleteMany();
     await db.user.deleteMany();
 
-    const redisClient = redisService.getClient();
-    await redisClient.del(`session:${sessionToken}`);
+    if (sessionToken) {
+      await sessionService.deleteSession(sessionToken);
+    }
+    await redisService.quit();
   });
 
   beforeEach(async () => {

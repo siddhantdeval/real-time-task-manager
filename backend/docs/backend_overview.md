@@ -1,6 +1,6 @@
 # Backend Overview
 
-> *Last updated: 2026-02-27*
+> *Last updated: 2026-03-16*
 
 ## 📖 Introduction
 The Backend service for the Real-time Task Manager is a high-performance, scalable Node.js application. It manages tasks, projects, and users — with real-time synchronisation capabilities, role-based access control (RBAC), and project activity logging.
@@ -55,6 +55,13 @@ backend/
 | LEAD | ✅ | ✅ | ✅ |
 | MEMBER | ✅ | ❌ | ❌ |
 | VIEWER | ✅ | ❌ | ❌ |
+
+## 🧪 Testing & Quality
+
+1.  **Unit Testing**: Services are tested in isolation using Jest and manual mocks for Prisma and Redis.
+2.  **Integration Testing**: API endpoints are tested against a dedicated test environment using a separate PostgreSQL and Redis instance (via `docker-compose.test.yml`).
+3.  **Environment Isolation**: Uses `.env.test` for test configuration, ensuring no interference with development or production data.
+4.  **Database Migrations**: Tests run against a fresh schema migrated via `prisma migrate deploy` in the test database.
 
 ## 📋 Activity Logging
 Every significant mutation (project creation, archiving, adding a member) writes a `ProjectActivity` record via the `logActivity` utility. The last 5 entries are embedded in `GET /projects/:id` and up to 10 are available via `GET /projects/:id/activity`.

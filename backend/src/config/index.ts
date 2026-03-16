@@ -2,14 +2,16 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { environmentSchema } from './schema';
 
-// Load .env file
-const envPath = path.resolve(process.cwd(), '.env');
+// Load .env file based on NODE_ENV
+const nodeEnv = process.env.NODE_ENV || 'development';
+const envFile = nodeEnv === 'test' ? '.env.test' : '.env';
+const envPath = path.resolve(process.cwd(), envFile);
 const result = dotenv.config({ path: envPath });
 
-if (result.error) {
-  // Only warn if .env file is missing, not if it's empty or other issues
-  // But strictly speaking, dotenv.config() returns error if file is missing
-  console.warn(`Warning: .env file not found at ${envPath}`);
+if (result.error && nodeEnv !== 'test') {
+  console.warn(`Warning: ${envFile} file not found at ${envPath}`);
+} else if (result.error && nodeEnv === 'test') {
+  console.warn(`Warning: .env.test file not found, falling back to process.env`);
 }
 
 const { error, value: envVars } = environmentSchema.validate(process.env, {
